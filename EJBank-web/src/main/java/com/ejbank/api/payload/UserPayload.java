@@ -4,12 +4,10 @@ public class UserPayload {
 
     private final String firstname;
     private final String lastname;
-    private final Integer age;
 
-    public UserPayload(String firstname, String lastname, Integer age) {
+    public UserPayload(String firstname, String lastname) {
         this.firstname = firstname;
         this.lastname = lastname;
-        this.age = age;
     }
 
     public String getFirstname() {
@@ -18,9 +16,5 @@ public class UserPayload {
 
     public String getLastname() {
         return lastname;
-    }
-
-    public Integer getAge() {
-        return age;
     }
 }
