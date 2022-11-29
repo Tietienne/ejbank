@@ -1,4 +1,4 @@
-package com.ejbank.api;
+package com.ejbank.api.routes;
 
 import com.ejbank.api.content.TransactionContent;
 import com.ejbank.api.payload.AllTransactionsPayload;

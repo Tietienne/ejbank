@@ -1,4 +1,4 @@
-package com.ejbank.api;
+package com.ejbank.api.routes;
 
 import com.ejbank.api.content.AllAccount;
 import com.ejbank.api.content.AttachedAccount;

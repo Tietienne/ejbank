@@ -1,4 +1,4 @@
-package com.ejbank.api;
+package com.ejbank.api.routes;
 
 import com.ejbank.api.payload.ServerPayload;
 import javax.enterprise.context.RequestScoped;
