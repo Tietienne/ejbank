@@ -1,6 +1,6 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.api.payload.UserPayload;
+import com.ejbank.api.payload.others.UserPayload;
 import com.ejbank.test.TestBeanLocal;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;

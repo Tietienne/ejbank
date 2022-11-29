@@ -1,4 +1,4 @@
-package com.ejbank.api.payload;
+package com.ejbank.api.payload.transactions;
 
 import java.util.Objects;
 

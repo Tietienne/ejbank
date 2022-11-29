@@ -1,6 +1,6 @@
-package com.ejbank.api.payload;
+package com.ejbank.api.payload.accounts;
 
-import com.ejbank.api.content.SummaryAccount;
+import com.ejbank.api.payload.accounts.SummaryAccount;
 
 import java.util.ArrayList;
 import java.util.Objects;

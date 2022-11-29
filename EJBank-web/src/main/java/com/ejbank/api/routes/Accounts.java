@@ -1,16 +1,15 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.api.content.AllAccount;
-import com.ejbank.api.content.AttachedAccount;
-import com.ejbank.api.content.SummaryAccount;
-import com.ejbank.api.payload.AllAccountPayload;
-import com.ejbank.api.payload.AttachedAccountPayload;
-import com.ejbank.api.payload.SummariesAccountPayload;
+import com.ejbank.api.payload.accounts.AllAccount;
+import com.ejbank.api.payload.accounts.AttachedAccount;
+import com.ejbank.api.payload.accounts.SummaryAccount;
+import com.ejbank.api.payload.accounts.AllAccountPayload;
+import com.ejbank.api.payload.accounts.AttachedAccountPayload;
+import com.ejbank.api.payload.accounts.SummariesAccountPayload;
 
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.sql.Array;
 import java.util.ArrayList;
 
 @Path("/accounts")

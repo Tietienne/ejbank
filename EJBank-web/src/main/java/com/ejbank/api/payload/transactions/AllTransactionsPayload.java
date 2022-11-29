@@ -1,6 +1,4 @@
-package com.ejbank.api.payload;
-
-import com.ejbank.api.content.TransactionContent;
+package com.ejbank.api.payload.transactions;
 
 import java.util.ArrayList;
 import java.util.Objects;

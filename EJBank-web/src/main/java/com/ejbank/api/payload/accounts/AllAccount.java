@@ -1,4 +1,4 @@
-package com.ejbank.api.content;
+package com.ejbank.api.payload.accounts;
 
 import java.util.Objects;
 

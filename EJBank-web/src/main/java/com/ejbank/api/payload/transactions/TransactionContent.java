@@ -1,4 +1,4 @@
-package com.ejbank.api.content;
+package com.ejbank.api.payload.transactions;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
