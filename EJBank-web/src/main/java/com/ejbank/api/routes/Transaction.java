@@ -1,13 +1,10 @@
 package com.ejbank.api.routes;
 
 import com.ejbank.api.content.TransactionContent;
-import com.ejbank.api.payload.AllTransactionsPayload;
+import com.ejbank.api.payload.*;
 
 import javax.enterprise.context.RequestScoped;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -23,6 +20,27 @@ public class Transaction {
         var transactions = new ArrayList<TransactionContent>();
         transactions.add(new TransactionContent(new BigInteger("271077732"), LocalDateTime.now(), "Label du compte source", "Label du compte destination", "Florian", 125.65f, "Etienne ALEXANDRE", "Cadeau pour Noël", "APPLYED"));
         return new AllTransactionsPayload(transactions);
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/preview")
+    public AnswerPreviewPayload previewRequest(PreviewPayload payload) {
+        return new AnswerPreviewPayload(true, 456f, 350f, "Oups...");
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/apply")
+    public AnswerApplyPayload applyRequest(ApplyPayload payload) {
+        return new AnswerApplyPayload(false, "Oups...");
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/validation")
+    public AnswerValidationPayload validationRequest(ValidationPayload payload) {
+        return new AnswerValidationPayload(false, "Retour du serveur");
     }
 
     @GET
