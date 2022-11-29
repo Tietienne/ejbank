@@ -1,18 +1,21 @@
 package com.ejbank.api;
 
-import com.ejbank.api.payload.UserPayload;
+import com.ejbank.api.payload.DetailsAccountPayload;
 
 import javax.enterprise.context.RequestScoped;
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/accounts")
+@Path("/account")
 @Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class Account {
     @GET
-    @Path("/{user_id}")
-    public UserPayload testPayloadReponse(@PathParam("user_id") Integer user_id) {
-        return new UserPayload("Jean", "Dupont");
+    @Path("/{account_id}/{user_id}")
+    public DetailsAccountPayload summariesAccountPayloadReponse(@PathParam("account_id") Integer account_id, @PathParam("user_id") Integer user_id) {
+        return new DetailsAccountPayload("Etienne ALEXANDRE", "Conseillé 1", 15f, 56f, 1000f);
     }
 }

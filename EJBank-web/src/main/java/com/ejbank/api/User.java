@@ -12,7 +12,7 @@ import javax.ws.rs.core.MediaType;
 public class User {
     @GET
     @Path("/{user_id}")
-    public UserPayload testPayloadReponse(@PathParam("user_id") Integer user_id) {
+    public UserPayload userPayloadResponse(@PathParam("user_id") Integer user_id) {
         return new UserPayload("Etienne", "Alexandre");
     }
 }
