@@ -1,10 +1,7 @@
 package com.ejbank.api;
 
-import com.ejbank.api.payload.PeoplePayload;
 import com.ejbank.api.payload.UserPayload;
-import com.ejbank.test.TestBeanLocal;
 
-import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
