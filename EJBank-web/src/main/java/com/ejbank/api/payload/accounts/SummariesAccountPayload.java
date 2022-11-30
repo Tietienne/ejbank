@@ -9,10 +9,10 @@ public class SummariesAccountPayload {
     private final ArrayList<SummaryAccount> accounts;
     private final String error;
 
-    public SummariesAccountPayload(ArrayList<SummaryAccount> accounts) {
+    public SummariesAccountPayload(ArrayList<SummaryAccount> accounts, String error) {
         Objects.requireNonNull(accounts);
         this.accounts = accounts;
-        this.error = null;
+        this.error = error;
     }
 
     public ArrayList<SummaryAccount> getAccounts() {

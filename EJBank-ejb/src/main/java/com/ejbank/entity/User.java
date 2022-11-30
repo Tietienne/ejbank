@@ -4,6 +4,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ejbank_user")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorValue("")
 public class User {
     @Id
     private Integer id;
@@ -20,9 +23,7 @@ public class User {
     @Column
     private String type;
 
-    public User() {
-
-    }
+    public User() {}
 
     public User(Integer id, String login, String password, String email, String firstname, String lastname, String type) {
         this.id = id;
