@@ -4,6 +4,8 @@ import com.ejbank.entity.Account;
 import com.ejbank.entity.Advisor;
 import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
+import com.ejbank.payload.accounts.AllAccount;
+import com.ejbank.payload.accounts.AllAccountPayload;
 import com.ejbank.payload.accounts.SummariesAccountPayload;
 import com.ejbank.payload.accounts.SummaryAccount;
 
@@ -31,6 +33,21 @@ public class AccountsBean implements AccountsBeanLocal {
             var shortAccount = customer.getAccounts().stream().map(e -> new SummaryAccount(e.getId().toString(),e.getAccountType().toString(),e.getBalance()));
             return new SummariesAccountPayload(shortAccount.toList(),null);
         }
+    }
 
+    @Override
+    public AllAccountPayload getAllAccounts(Integer user_id) {
+        var user = em.find(User.class, user_id);
+        if(user == null) {
+            return new AllAccountPayload(null,"User not here");
+        } else if(user instanceof Advisor) {
+            // TODO get related accounts of advisor
+            var advisor = (Advisor) user;
+            return new AllAccountPayload(null,"TODO");
+        } else {
+            var customer = (Customer) user;
+            var allAccount = customer.getAccounts().stream().map(e -> new AllAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance()));
+            return new AllAccountPayload(allAccount.toList(),null);
+        }
     }
 }

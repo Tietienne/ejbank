@@ -13,6 +13,7 @@ public class AllAccount {
         Objects.requireNonNull(id);
         Objects.requireNonNull(user);
         Objects.requireNonNull(type);
+        Objects.requireNonNull(amount);
         this.id = id;
         this.user = user;
         this.type = type;
