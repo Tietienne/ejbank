@@ -58,4 +58,9 @@ public class AccountType {
     public void setOverdraft(Integer overdraft) {
         this.overdraft = overdraft;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

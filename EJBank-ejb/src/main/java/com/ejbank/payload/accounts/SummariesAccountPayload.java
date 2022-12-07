@@ -9,7 +9,6 @@ public class SummariesAccountPayload {
     private final String error;
 
     public SummariesAccountPayload(List<SummaryAccount> accounts, String error) {
-        Objects.requireNonNull(accounts);
         this.accounts = accounts;
         this.error = error;
     }
