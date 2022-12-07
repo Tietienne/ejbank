@@ -21,7 +21,7 @@ public class Accounts {
     public SummariesAccountPayload summariesAccountPayloadReponse(@PathParam("user_id") Integer user_id) {
         var accounts = new ArrayList<SummaryAccount>();
         accounts.add(new SummaryAccount("287621192","Label du compte (courant)", 3200f));
-        return new SummariesAccountPayload(accounts);
+        return new SummariesAccountPayload(accounts, null);
     }
 
     @GET

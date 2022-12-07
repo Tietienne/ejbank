@@ -13,9 +13,14 @@ public class AccountsBean implements AccountsBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
 
-    @Override
+    /*@Override
     public SummariesAccountPayload getCustomerAccounts(Integer user_id) {
         em.createQuery("SELECT account FROM Account WHERE id=user_id");
+        return null;
+    }*/
+
+    @Override
+    public SummariesAccountPayload getCustomerAccounts() {
         return null;
     }
 }
