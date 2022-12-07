@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class Account {
+
+
     @GET
     @Path("/{account_id}/{user_id}")
     public DetailsAccountPayload summariesAccountPayloadReponse(@PathParam("account_id") Integer account_id, @PathParam("user_id") Integer user_id) {

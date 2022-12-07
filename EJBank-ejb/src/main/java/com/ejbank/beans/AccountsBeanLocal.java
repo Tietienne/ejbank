@@ -6,5 +6,5 @@ import javax.ejb.Local;
 
 @Local
 public interface AccountsBeanLocal {
-    SummariesAccountPayload getCustomerAccounts();
+    SummariesAccountPayload getCustomerAccounts(Integer user_id);
 }

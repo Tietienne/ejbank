@@ -5,8 +5,11 @@ import com.ejbank.api.payload.accounts.AttachedAccount;
 import com.ejbank.api.payload.accounts.SummaryAccount;
 import com.ejbank.api.payload.accounts.AllAccountPayload;
 import com.ejbank.api.payload.accounts.AttachedAccountPayload;
-import com.ejbank.api.payload.accounts.SummariesAccountPayload;
+import com.ejbank.beans.AccountsBeanLocal;
+import com.ejbank.payload.accounts.SummariesAccountPayload;
 
+
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -16,12 +19,15 @@ import java.util.ArrayList;
 @Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class Accounts {
+    @EJB
+    private AccountsBeanLocal accountsBeanLocal;
     @GET
     @Path("/{user_id}")
     public SummariesAccountPayload summariesAccountPayloadReponse(@PathParam("user_id") Integer user_id) {
-        var accounts = new ArrayList<SummaryAccount>();
-        accounts.add(new SummaryAccount("287621192","Label du compte (courant)", 3200f));
-        return new SummariesAccountPayload(accounts, null);
+        //var accounts = new ArrayList<SummaryAccount>();
+       // accounts.add(new SummaryAccount("287621192","Label du compte (courant)", 3200f));
+        var accounts = accountsBeanLocal.getCustomerAccounts(user_id);
+        return accounts;
     }
 
     @GET

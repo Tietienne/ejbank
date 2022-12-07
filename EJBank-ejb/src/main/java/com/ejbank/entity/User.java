@@ -4,11 +4,13 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ejbank_user")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING)
-@DiscriminatorValue("")
+@DiscriminatorValue("toto")
 public class User {
     @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
     @Column
     private String login;
@@ -25,8 +27,7 @@ public class User {
 
     public User() {}
 
-    public User(Integer id, String login, String password, String email, String firstname, String lastname, String type) {
-        this.id = id;
+    public User(String login, String password, String email, String firstname, String lastname, String type) {
         this.login = login;
         this.password = password;
         this.email = email;
