@@ -43,7 +43,6 @@ public class AccountsBean implements AccountsBeanLocal {
             return new AllAccountPayload(null,"User not here");
         } else if(user instanceof Advisor) {
             var advisor = (Advisor) user;
-            System.out.println(advisor.getCustomers());
             var allAccounts = new ArrayList<AllAccount>();
             for (var customer : advisor.getCustomers()) {
                 allAccounts.addAll(customer.getAccounts().stream().map(e -> new AllAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance())).toList());
