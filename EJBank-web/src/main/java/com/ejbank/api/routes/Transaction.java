@@ -1,7 +1,10 @@
 package com.ejbank.api.routes;
 
+import com.ejbank.beans.AccountsBeanLocal;
+import com.ejbank.beans.TransactionBeanLocal;
 import com.ejbank.payload.transactions.*;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -13,6 +16,9 @@ import java.util.ArrayList;
 @Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class Transaction {
+
+    @EJB
+    private TransactionBeanLocal transactionBeanLocal;
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
     public AllTransactionsPayload AllTransactions() {
