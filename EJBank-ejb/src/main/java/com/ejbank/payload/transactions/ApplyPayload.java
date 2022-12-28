@@ -28,4 +28,24 @@ public class ApplyPayload {
     public String getAuthor() {
         return author;
     }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public void setAmount(Float amount) {
+        this.amount = amount;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 }

@@ -19,4 +19,16 @@ public class ValidationPayload {
     public String getAuthor() {
         return author;
     }
+
+    public void setTransaction(BigInteger transaction) {
+        this.transaction = transaction;
+    }
+
+    public void setApprove(Boolean approve) {
+        this.approve = approve;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 }
