@@ -1,12 +1,7 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.api.payload.accounts.AllAccount;
-import com.ejbank.api.payload.accounts.AttachedAccount;
-import com.ejbank.api.payload.accounts.SummaryAccount;
-import com.ejbank.api.payload.accounts.AllAccountPayload;
-import com.ejbank.api.payload.accounts.AttachedAccountPayload;
 import com.ejbank.beans.AccountsBeanLocal;
-import com.ejbank.payload.accounts.SummariesAccountPayload;
+import com.ejbank.payload.accounts.*;
 
 
 import javax.ejb.EJB;
@@ -44,6 +39,6 @@ public class Accounts {
         var accounts = new ArrayList<AllAccount>();
         accounts.add(new AllAccount("287621192", "Eienne ALEXANDRE", "Label du compte (courant)", 3200f));
         accounts.add(new AllAccount("287621193", "Eienne ALEXANDRE", "Label du compte (Livret A)", 4000f));
-        return new AllAccountPayload(accounts);
+        return new AllAccountPayload(accounts, null);
     }
 }
