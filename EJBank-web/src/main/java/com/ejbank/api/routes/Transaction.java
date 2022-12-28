@@ -1,6 +1,6 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.api.payload.transactions.*;
+import com.ejbank.payload.transactions.*;
 
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
