@@ -13,6 +13,7 @@ import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @Stateless
@@ -41,9 +42,13 @@ public class AccountsBean implements AccountsBeanLocal {
         if(user == null) {
             return new AllAccountPayload(null,"User not here");
         } else if(user instanceof Advisor) {
-            // TODO get related accounts of advisor
             var advisor = (Advisor) user;
-            return new AllAccountPayload(null,"TODO");
+            System.out.println(advisor.getCustomers());
+            var allAccounts = new ArrayList<AllAccount>();
+            for (var customer : advisor.getCustomers()) {
+                allAccounts.addAll(customer.getAccounts().stream().map(e -> new AllAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance())).toList());
+            }
+            return new AllAccountPayload(allAccounts,null);
         } else {
             var customer = (Customer) user;
             var allAccount = customer.getAccounts().stream().map(e -> new AllAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance()));

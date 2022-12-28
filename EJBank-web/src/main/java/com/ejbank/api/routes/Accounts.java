@@ -19,10 +19,7 @@ public class Accounts {
     @GET
     @Path("/{user_id}")
     public SummariesAccountPayload summariesAccountPayloadReponse(@PathParam("user_id") Integer user_id) {
-        //var accounts = new ArrayList<SummaryAccount>();
-       // accounts.add(new SummaryAccount("287621192","Label du compte (courant)", 3200f));
-        var accounts = accountsBeanLocal.getCustomerAccounts(user_id);
-        return accounts;
+        return accountsBeanLocal.getCustomerAccounts(user_id);
     }
 
     @GET
@@ -36,9 +33,6 @@ public class Accounts {
     @GET
     @Path("/all/{user_id}")
     public AllAccountPayload allAccountPayloadReponse(@PathParam("user_id") Integer user_id) {
-        var accounts = new ArrayList<AllAccount>();
-        accounts.add(new AllAccount("287621192", "Eienne ALEXANDRE", "Label du compte (courant)", 3200f));
-        accounts.add(new AllAccount("287621193", "Eienne ALEXANDRE", "Label du compte (Livret A)", 4000f));
-        return new AllAccountPayload(accounts, null);
+        return accountsBeanLocal.getAllAccounts(user_id);
     }
 }
