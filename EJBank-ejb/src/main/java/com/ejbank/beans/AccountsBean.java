@@ -4,10 +4,7 @@ import com.ejbank.entity.Account;
 import com.ejbank.entity.Advisor;
 import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
-import com.ejbank.payload.accounts.AllAccount;
-import com.ejbank.payload.accounts.AllAccountPayload;
-import com.ejbank.payload.accounts.SummariesAccountPayload;
-import com.ejbank.payload.accounts.SummaryAccount;
+import com.ejbank.payload.accounts.*;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -52,6 +49,23 @@ public class AccountsBean implements AccountsBeanLocal {
             var customer = (Customer) user;
             var allAccount = customer.getAccounts().stream().map(e -> new AllAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance()));
             return new AllAccountPayload(allAccount.toList(),null);
+        }
+    }
+
+    @Override
+    public AttachedAccountPayload getAllAttachedAccount(Integer advisor_id) {
+        var user = em.find(User.class, advisor_id);
+        if(user == null) {
+            return new AttachedAccountPayload(null);
+        } else if(user instanceof Advisor) {
+            var advisor = (Advisor) user;
+            var allAccounts = new ArrayList<AttachedAccount>();
+            for (var customer : advisor.getCustomers()) {
+                allAccounts.addAll(customer.getAccounts().stream().map(e -> new AttachedAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance(),1)).toList());
+            }
+            return new AttachedAccountPayload(allAccounts);
+        } else {
+            return new AttachedAccountPayload(null);
         }
     }
 }

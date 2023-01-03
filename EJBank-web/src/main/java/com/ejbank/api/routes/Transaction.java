@@ -11,6 +11,8 @@ import javax.ws.rs.core.MediaType;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Path("/transaction")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,12 +37,16 @@ public class Transaction {
         return transactionBeanLocal.getAnswerPreview(payload);
     }
 
+
+
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/apply")
     public AnswerApplyPayload applyRequest(ApplyPayload payload) {
         //TODO : Apply a transaction (verify if it's correct) and send answer
-        return new AnswerApplyPayload(false, "Oups...");
+
+        return new AnswerApplyPayload(true, "Oups...");
     }
 
     @POST

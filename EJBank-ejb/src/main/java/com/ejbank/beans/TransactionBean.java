@@ -18,6 +18,7 @@ public class TransactionBean implements TransactionBeanLocal {
     @Override
     public AnswerPreviewPayload getAnswerPreview(PreviewPayload preview) {
         var source = em.find(Account.class, Integer.parseInt(preview.getSource()));
+
         if (source.getBalance() - Float.parseFloat(preview.getAmount()) < - source.getAccountType().getOverdraft() ) {
             return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - Float.parseFloat(preview.getAmount()), "Solde du compte source insuffisant", null);
         }
