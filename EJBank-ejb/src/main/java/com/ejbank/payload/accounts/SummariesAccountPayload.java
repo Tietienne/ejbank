@@ -1,19 +1,19 @@
 package com.ejbank.payload.accounts;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class SummariesAccountPayload {
-    private final ArrayList<SummaryAccount> accounts;
+    private final List<SummaryAccount> accounts;
     private final String error;
 
-    public SummariesAccountPayload(ArrayList<SummaryAccount> accounts, String error) {
-        Objects.requireNonNull(accounts);
+    public SummariesAccountPayload(List<SummaryAccount> accounts, String error) {
         this.accounts = accounts;
         this.error = error;
     }
 
-    public ArrayList<SummaryAccount> getAccounts() {
+    public List<SummaryAccount> getAccounts() {
         return accounts;
     }
 

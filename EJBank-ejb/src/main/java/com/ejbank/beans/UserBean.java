@@ -1,5 +1,6 @@
 package com.ejbank.beans;
 
+import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
 import com.ejbank.payload.others.UserPayload;
 

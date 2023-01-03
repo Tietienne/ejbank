@@ -1,6 +1,6 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.api.payload.others.DetailsAccountPayload;
+import com.ejbank.payload.others.DetailsAccountPayload;
 
 import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.GET;
@@ -13,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @RequestScoped
 public class Account {
+
+
     @GET
     @Path("/{account_id}/{user_id}")
     public DetailsAccountPayload summariesAccountPayloadReponse(@PathParam("account_id") Integer account_id, @PathParam("user_id") Integer user_id) {

@@ -1,23 +1,10 @@
 package com.ejbank.payload.transactions;
 
-import java.util.Objects;
-
 public class PreviewPayload {
-    private final String source;
-    private final String destination;
-    private final String amount;
-    private final String author;
-
-    public PreviewPayload(String source, String destination, String amount, String author) {
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(destination);
-        Objects.requireNonNull(amount);
-        Objects.requireNonNull(author);
-        this.source = source;
-        this.destination = destination;
-        this.amount = amount;
-        this.author = author;
-    }
+    private String source;
+    private String destination;
+    private String amount;
+    private String author;
 
     public String getSource() {
         return source;
@@ -33,5 +20,21 @@ public class PreviewPayload {
 
     public String getAuthor() {
         return author;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }

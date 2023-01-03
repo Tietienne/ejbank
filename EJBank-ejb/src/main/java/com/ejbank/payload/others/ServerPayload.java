@@ -1,4 +1,4 @@
-package com.ejbank.api.payload.others;
+package com.ejbank.payload.others;
 
 public class ServerPayload {
 
