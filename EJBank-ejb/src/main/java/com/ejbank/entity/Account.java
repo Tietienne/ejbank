@@ -1,6 +1,7 @@
 package com.ejbank.entity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "ejbank_account")
@@ -12,6 +13,12 @@ public class Account {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_type_id", referencedColumnName = "id")
     private AccountType accountType;
+
+
+
+    @OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "account_id_from",referencedColumnName = "id")
+    private List<Transaction> transactions;
     @Column
     private Float balance;
 
@@ -55,5 +62,8 @@ public class Account {
 
     public void setBalance(Float balance) {
         this.balance = balance;
+    }
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 }

@@ -46,7 +46,7 @@ public class Transaction {
     public AnswerApplyPayload applyRequest(ApplyPayload payload) {
         //TODO : Apply a transaction (verify if it's correct) and send answer
 
-        return new AnswerApplyPayload(true, "Oups...");
+        return transactionBeanLocal.apply(payload);
     }
 
     @POST
