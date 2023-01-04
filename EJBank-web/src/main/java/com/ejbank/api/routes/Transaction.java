@@ -6,6 +6,7 @@ import com.ejbank.payload.transactions.*;
 
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
+import javax.transaction.SystemException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.math.BigInteger;
@@ -43,7 +44,7 @@ public class Transaction {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/apply")
-    public AnswerApplyPayload applyRequest(ApplyPayload payload) {
+    public AnswerApplyPayload applyRequest(ApplyPayload payload) throws SystemException {
         //TODO : Apply a transaction (verify if it's correct) and send answer
 
         return transactionBeanLocal.apply(payload);
