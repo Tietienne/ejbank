@@ -7,9 +7,10 @@ import com.ejbank.payload.transactions.ApplyPayload;
 import com.ejbank.payload.transactions.PreviewPayload;
 
 import javax.ejb.Local;
+import javax.transaction.SystemException;
 
 @Local
 public interface TransactionBeanLocal {
     AnswerPreviewPayload getAnswerPreview(PreviewPayload preview);
-    AnswerApplyPayload apply(ApplyPayload preview);
+    AnswerApplyPayload apply(ApplyPayload preview) throws SystemException;
 }
