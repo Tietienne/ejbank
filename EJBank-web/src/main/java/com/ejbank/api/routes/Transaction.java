@@ -24,11 +24,9 @@ public class Transaction {
     private TransactionBeanLocal transactionBeanLocal;
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
-    public AllTransactionsPayload AllTransactions() {
+    public AllTransactionsPayload AllTransactions(@PathParam("account_id")Integer account_id, @PathParam("offset") Integer offset, @PathParam("user_id") Integer user_id) {
         //TODO : send all transactions of an account (asked by an user ?) depending on an offset
-        var transactions = new ArrayList<TransactionContent>();
-        transactions.add(new TransactionContent(new BigInteger("271077732"), LocalDateTime.now(), "Label du compte source", "Label du compte destination", "Florian", 125.65f, "Etienne ALEXANDRE", "Cadeau pour Noël", "APPLYED"));
-        return new AllTransactionsPayload(transactions);
+        return transactionBeanLocal.getAllTransactionsOf(account_id,offset,user_id);
     }
 
     @POST

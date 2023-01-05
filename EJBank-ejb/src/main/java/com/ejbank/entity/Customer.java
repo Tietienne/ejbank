@@ -14,6 +14,7 @@ public class Customer extends User {
     @JoinColumn(name = "customer_id")
     private List<Account> accounts;
 
+
     public Customer() {}
 
     public Customer(String login, String password, String email, String firstname, String lastname, Advisor advisor) {
@@ -25,6 +26,7 @@ public class Customer extends User {
     public Advisor getAdvisor() {
         return advisor;
     }
+
 
     public List<Account> getAccounts() {
         return accounts;

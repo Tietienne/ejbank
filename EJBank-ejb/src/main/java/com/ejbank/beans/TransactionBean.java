@@ -12,6 +12,10 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,7 +48,7 @@ public class TransactionBean implements TransactionBeanLocal {
 
         em.persist(new Transaction(Integer.parseInt(preview.getSource()),
                     Integer.parseInt(preview.getDestination()),
-                    preview.getAuthor(),preview.getAmount(),preview.getComment(),true,now));
+                    preview.getAuthor(),preview.getAmount(),preview.getComment(),0,now));
 
         source.setBalance(source.getBalance()-preview.getAmount());
         dest.setBalance(source.getBalance()+preview.getAmount());
@@ -55,9 +59,40 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
+        var destUser = em.find(User.class, userId);
+        var cb = em.getCriteriaBuilder();
+        var cq = cb.createQuery(Transaction.class);
+        var root = cq.from(Transaction.class);
+        cq.select(root);
+        cq.where(cb.equal(root.get("account_id_from"), accountId));
+        var query = em.createQuery(cq);
+        query.setFirstResult(offset);
+        query.setMaxResults(10);
 
 
-        return null;
+        var transactionContents = query.getResultList().stream().map(t -> {
+            var instant = t.getDate().toInstant();
+            var ldt = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+            var srcAccount = em.find(Account.class, t.getAccount_id_from());
+            var srcCustomer = em.find(User.class,srcAccount.getCustomer_id());
 
+            var destAccount = em.find(Account.class, t.getAccount_id_to());
+            var destCustomer = em.find(User.class,destAccount.getCustomer_id());
+
+            var auther = em.find(User.class,Integer.parseInt(t.getAuthor()));
+
+            return new TransactionContent(
+                 BigInteger.valueOf(t.getId()),
+                ldt,
+               srcAccount.getAccountType().getName().concat("(").concat(srcCustomer.getFirstname().concat(" ").concat(srcCustomer.getLastname()).concat(")")),
+               destAccount.getAccountType().getName(), destCustomer.getFirstname().concat(" ").concat(destCustomer.getLastname()),
+                t.getAmount(), auther.getFirstname().concat(" ").concat(auther.getLastname()),
+                t.getComment() == null? "NO COMMENT" : t.getComment(),
+                t.getApplied().toString());
+        }).toList();
+
+       // var transactions = new ArrayList<TransactionContent>();
+       // transactions.add(new TransactionContent(new BigInteger(String.valueOf(transactionContents.size())), LocalDateTime.now(), "Label du compte source", "Label du compte destination", "Florian", 125.65f, "Etienne ALEXANDRE", "Cadeau pour Noël", "APPLYED"));
+        return new AllTransactionsPayload(transactionContents);
     }
 }
