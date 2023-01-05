@@ -26,13 +26,13 @@ public class TransactionBean implements TransactionBeanLocal {
         var dest = em.find(Account.class, preview.getDestination());
         var user = em.find(User.class, Integer.parseInt(preview.getAuthor()));
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
-            return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - preview.getAmount(), "The transaction is not valid.", null);
+            return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - preview.getAmount(), "La transaction n'est pas valide.", null);
         }
         String message;
         if (preview.getAmount() > 1000 && user instanceof Customer) {
-            message = "The transaction is valid but it needs to be validated by your Advisor!";
+            message = "La transaction est valide mais nécessitera la validation de votre conseiller!";
         } else {
-            message = "The transaction is valid.";
+            message = "La transaction est valide.";
         }
         return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), message, null);
     }
@@ -43,15 +43,15 @@ public class TransactionBean implements TransactionBeanLocal {
         var dest = em.find(Account.class, preview.getDestination());
         var user = em.find(User.class, Integer.parseInt(preview.getAuthor()));
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
-            new AnswerApplyPayload(false,"Transaction failed");
+            new AnswerApplyPayload(false,"Transaction échouée");
         }
         boolean applied;
         String message;
         if (preview.getAmount() > 1000 && user instanceof Customer) {
-            message = "Transaction added but it needs to be validated by your Advisor!";
+            message = "Transaction ajoutée mais nécessite la validation de votre conseiller!";
             applied = false;
         } else {
-            message = "Transaction added.";
+            message = "Transaction ajoutée.";
             applied = true;
         }
         Calendar calendar = Calendar.getInstance();
