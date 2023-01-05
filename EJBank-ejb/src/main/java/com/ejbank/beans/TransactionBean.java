@@ -1,8 +1,6 @@
 package com.ejbank.beans;
 
 import com.ejbank.entity.*;
-import com.ejbank.payload.accounts.AllAccount;
-import com.ejbank.payload.accounts.AllAccountPayload;
 import com.ejbank.payload.transactions.*;
 
 import javax.ejb.LocalBean;
@@ -10,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -93,5 +90,25 @@ public class TransactionBean implements TransactionBeanLocal {
             return notification;
         }
         return 0;
+    }
+
+    //TODO : Tests
+    @Override
+    public AnswerValidationPayload validate(ValidationPayload preview) {
+        var transaction = em.find(Transaction.class, preview.getTransaction());
+        var user = em.find(User.class, Integer.parseInt(preview.getAuthor()));
+        var source = em.find(Account.class, transaction.getAccount_id_from());
+        var dest = em.find(Account.class, transaction.getAccount_id_to());
+        if (user instanceof Advisor) {
+            if (transaction.getAmount() <= 0 || source.getBalance() - transaction.getAmount() < - source.getAccountType().getOverdraft() ) {
+                new AnswerValidationPayload(false,"Transaction échouée", null);
+            }
+            transaction.setApplied(true);
+            source.setBalance(source.getBalance()-transaction.getAmount());
+            dest.setBalance(dest.getBalance()+transaction.getAmount());
+            em.flush();
+            return new AnswerValidationPayload(true, "Transaction validée", null);
+        }
+        return new AnswerValidationPayload(false, null, "Vous n'êtes pas autorisé à valider cette transaction");
     }
 }

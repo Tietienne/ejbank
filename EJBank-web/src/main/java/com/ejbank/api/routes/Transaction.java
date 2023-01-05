@@ -45,7 +45,6 @@ public class Transaction {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/apply")
     public AnswerApplyPayload applyRequest(ApplyPayload payload) throws SystemException {
-        //TODO : Apply a transaction (verify if it's correct) and send answer
         return transactionBeanLocal.apply(payload);
     }
 
@@ -54,7 +53,7 @@ public class Transaction {
     @Path("/validation")
     public AnswerValidationPayload validationRequest(ValidationPayload payload) {
         //TODO : Validate a transaction (also verify if it's correct ?)
-        return new AnswerValidationPayload(false, "Retour du serveur");
+        return transactionBeanLocal.validate(payload);
     }
 
     @GET

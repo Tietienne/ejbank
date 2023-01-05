@@ -47,6 +47,10 @@ public class Transaction {
         return date;
     }
 
+    public void setApplied(Boolean applied) {
+        this.applied = applied;
+    }
+
     @Column(name = "account_id_from")
     private Integer account_id_from;
 
@@ -70,8 +74,6 @@ public class Transaction {
 
     public Transaction() {}
 
-
-
     public Transaction(Integer account_id_to, Integer account_id_from, String author, Float amount, String comment, Boolean applied, Date date) {
         this.account_id_to = Objects.requireNonNull(account_id_to);
         this.account_id_from = Objects.requireNonNull(account_id_from);
@@ -81,7 +83,4 @@ public class Transaction {
         this.applied = Objects.requireNonNull(applied);
         this.date = Objects.requireNonNull(date);
     }
-
-
-
 }
