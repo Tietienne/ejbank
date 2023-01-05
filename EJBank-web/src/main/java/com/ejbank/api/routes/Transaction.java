@@ -46,7 +46,6 @@ public class Transaction {
     @Path("/apply")
     public AnswerApplyPayload applyRequest(ApplyPayload payload) throws SystemException {
         //TODO : Apply a transaction (verify if it's correct) and send answer
-
         return transactionBeanLocal.apply(payload);
     }
 
