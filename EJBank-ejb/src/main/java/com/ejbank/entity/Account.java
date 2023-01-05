@@ -14,8 +14,6 @@ public class Account {
     @JoinColumn(name = "account_type_id", referencedColumnName = "id")
     private AccountType accountType;
 
-
-
     @OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id_from",referencedColumnName = "id")
     private List<Transaction> transactions;

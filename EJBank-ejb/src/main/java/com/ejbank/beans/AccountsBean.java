@@ -1,6 +1,5 @@
 package com.ejbank.beans;
 
-import com.ejbank.entity.Account;
 import com.ejbank.entity.Advisor;
 import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
@@ -11,7 +10,6 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.List;
 
 @Stateless
 @Local
@@ -61,7 +59,15 @@ public class AccountsBean implements AccountsBeanLocal {
             var advisor = (Advisor) user;
             var allAccounts = new ArrayList<AttachedAccount>();
             for (var customer : advisor.getCustomers()) {
-                allAccounts.addAll(customer.getAccounts().stream().map(e -> new AttachedAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance(),1)).toList());
+                for(var acc : customer.getAccounts()) {
+                    var notification = 0;
+                    for (var transaction : acc.getTransactions()) {
+                        if (!transaction.getApplied()) {
+                            notification++;
+                        }
+                    }
+                    allAccounts.add(new AttachedAccount(acc.getId().toString(),acc.getCustomer_id().toString(), acc.getAccountType().toString(),acc.getBalance(),notification));
+                }
             }
             return new AttachedAccountPayload(allAccounts, null);
         } else {
