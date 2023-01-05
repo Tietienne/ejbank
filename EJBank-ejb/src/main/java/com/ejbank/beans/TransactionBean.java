@@ -20,26 +20,26 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public AnswerPreviewPayload getAnswerPreview(PreviewPayload preview) {
-        var source = em.find(Account.class, Integer.parseInt(preview.getSource()));
-        var dest = em.find(Account.class, Integer.parseInt(preview.getDestination()));
-        if (Integer.parseInt(preview.getAmount()) <= 0 || source.getBalance() - Float.parseFloat(preview.getAmount()) < - source.getAccountType().getOverdraft() ) {
-            return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - Float.parseFloat(preview.getAmount()), "The transaction is not valid", null);
+        var source = em.find(Account.class, preview.getSource());
+        var dest = em.find(Account.class, preview.getDestination());
+        if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
+            return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - preview.getAmount(), "The transaction is not valid", null);
         }
-        return new AnswerPreviewPayload(true, source.getBalance() - Float.parseFloat(preview.getAmount()), dest.getBalance() + Float.parseFloat(preview.getAmount()), "The transaction is valid", null);
+        return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), "The transaction is valid", null);
     }
 
     @Transactional
     public AnswerApplyPayload apply(ApplyPayload preview) {
-        var source = em.find(Account.class, Integer.parseInt(preview.getSource()));
-        var dest = em.find(Account.class, Integer.parseInt(preview.getDestination()));
+        var source = em.find(Account.class, preview.getSource());
+        var dest = em.find(Account.class, preview.getDestination());
 
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
             new AnswerApplyPayload(false,"Transaction failed");
         }
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
-        em.persist(new Transaction(Integer.parseInt(preview.getDestination()),
-                Integer.parseInt(preview.getSource()),
+        em.persist(new Transaction(preview.getDestination(),
+                preview.getSource(),
                 preview.getAuthor(),preview.getAmount(),preview.getComment(),true,now));
         source.setBalance(source.getBalance()-preview.getAmount());
         dest.setBalance(dest.getBalance()+preview.getAmount());

@@ -3,17 +3,17 @@ package com.ejbank.payload.transactions;
 import java.util.Objects;
 
 public class ApplyPayload {
-    private String source;
-    private String destination;
+    private Integer source;
+    private Integer destination;
     private Float amount;
     private String comment;
     private String author;
 
-    public String getSource() {
+    public Integer getSource() {
         return source;
     }
 
-    public String getDestination() {
+    public Integer getDestination() {
         return destination;
     }
 
@@ -29,11 +29,11 @@ public class ApplyPayload {
         return author;
     }
 
-    public void setSource(String source) {
+    public void setSource(Integer source) {
         this.source = source;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Integer destination) {
         this.destination = destination;
     }
 
