@@ -1,6 +1,8 @@
 package com.ejbank.beans;
 
 import com.ejbank.entity.*;
+import com.ejbank.payload.accounts.AllAccount;
+import com.ejbank.payload.accounts.AllAccountPayload;
 import com.ejbank.payload.transactions.*;
 
 import javax.ejb.LocalBean;
@@ -8,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -70,5 +73,25 @@ public class TransactionBean implements TransactionBeanLocal {
 
         return null;
 
+    }
+
+    @Override
+    public Integer getNotificationPayload(Integer user_id) {
+        var user = em.find(User.class, user_id);
+        if(user instanceof Advisor) {
+            var advisor = (Advisor) user;
+            var notification = 0;
+            for (var customer : advisor.getCustomers()) {
+                for (var account : customer.getAccounts()) {
+                    for (var transaction : account.getTransactions()) {
+                        if (!transaction.getApplied()) {
+                            notification++;
+                        }
+                    }
+                }
+            }
+            return notification;
+        }
+        return 0;
     }
 }

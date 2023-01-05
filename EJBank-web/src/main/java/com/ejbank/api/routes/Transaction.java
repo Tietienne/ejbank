@@ -60,7 +60,6 @@ public class Transaction {
     @GET
     @Path("/validation/notification/{user_id}")
     public Integer validationNotif(@PathParam("user_id") Integer user_id) {
-        //TODO : Number of transactions to validate for user with user_id
-        return 3;
+        return transactionBeanLocal.getNotificationPayload(user_id);
     }
 }
