@@ -1,20 +1,20 @@
 package com.ejbank.payload.transactions;
 
 public class PreviewPayload {
-    private String source;
-    private String destination;
-    private String amount;
+    private Integer source;
+    private Integer destination;
+    private Float amount;
     private String author;
 
-    public String getSource() {
+    public Integer getSource() {
         return source;
     }
 
-    public String getDestination() {
+    public Integer getDestination() {
         return destination;
     }
 
-    public String getAmount() {
+    public Float getAmount() {
         return amount;
     }
 
@@ -22,15 +22,15 @@ public class PreviewPayload {
         return author;
     }
 
-    public void setSource(String source) {
+    public void setSource(Integer source) {
         this.source = source;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Integer destination) {
         this.destination = destination;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(Float amount) {
         this.amount = amount;
     }
 
