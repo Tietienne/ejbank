@@ -52,7 +52,6 @@ public class Transaction {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/validation")
     public AnswerValidationPayload validationRequest(ValidationPayload payload) {
-        //TODO : Validate a transaction (also verify if it's correct ?)
         return transactionBeanLocal.validate(payload);
     }
 

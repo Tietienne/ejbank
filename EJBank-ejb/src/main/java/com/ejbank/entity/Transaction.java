@@ -79,7 +79,7 @@ public class Transaction {
         this.account_id_from = Objects.requireNonNull(account_id_from);
         this.author = Objects.requireNonNull(author);
         this.amount = Objects.requireNonNull(amount);
-        this.comment = Objects.requireNonNull(comment);
+        this.comment = comment;
         this.applied = Objects.requireNonNull(applied);
         this.date = Objects.requireNonNull(date);
     }

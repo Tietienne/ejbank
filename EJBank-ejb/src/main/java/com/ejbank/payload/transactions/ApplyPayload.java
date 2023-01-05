@@ -22,7 +22,7 @@ public class ApplyPayload {
     }
 
     public String getComment() {
-        return comment;
+        return comment.equals("") ? null : comment;
     }
 
     public String getAuthor() {
