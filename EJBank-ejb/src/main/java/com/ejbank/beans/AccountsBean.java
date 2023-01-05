@@ -23,7 +23,7 @@ public class AccountsBean implements AccountsBeanLocal {
     public SummariesAccountPayload getCustomerAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
         if(user == null) {
-            return new SummariesAccountPayload(null,"User not here");
+            return new SummariesAccountPayload(null,"Utilisateur introuvable");
         } else if(user instanceof Advisor) {
             return new SummariesAccountPayload(null,"Vous n'êtes pas un client, vous ne pouvez pas consulter vos comptes.");
         } else {
@@ -37,7 +37,7 @@ public class AccountsBean implements AccountsBeanLocal {
     public AllAccountPayload getAllAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
         if(user == null) {
-            return new AllAccountPayload(null,"User not here");
+            return new AllAccountPayload(null,"Utilisateur introuvable");
         } else if(user instanceof Advisor) {
             var advisor = (Advisor) user;
             var allAccounts = new ArrayList<AllAccount>();
@@ -56,16 +56,16 @@ public class AccountsBean implements AccountsBeanLocal {
     public AttachedAccountPayload getAllAttachedAccount(Integer advisor_id) {
         var user = em.find(User.class, advisor_id);
         if(user == null) {
-            return new AttachedAccountPayload(null);
+            return new AttachedAccountPayload(null, "Utilisateur introuvable");
         } else if(user instanceof Advisor) {
             var advisor = (Advisor) user;
             var allAccounts = new ArrayList<AttachedAccount>();
             for (var customer : advisor.getCustomers()) {
                 allAccounts.addAll(customer.getAccounts().stream().map(e -> new AttachedAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance(),1)).toList());
             }
-            return new AttachedAccountPayload(allAccounts);
+            return new AttachedAccountPayload(allAccounts, null);
         } else {
-            return new AttachedAccountPayload(null);
+            return new AttachedAccountPayload(null, "Vous n'êtes pas un conseiller, vous n'avez pas de comptes rattachés.");
         }
     }
 }
