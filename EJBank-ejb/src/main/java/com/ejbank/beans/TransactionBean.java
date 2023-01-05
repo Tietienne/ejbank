@@ -1,21 +1,22 @@
 package com.ejbank.beans;
 
 import com.ejbank.entity.Account;
-import com.ejbank.entity.Customer;
 import com.ejbank.entity.Transaction;
 import com.ejbank.entity.User;
 import com.ejbank.payload.transactions.*;
-
-import javax.transaction.*;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+
+import javax.transaction.Transactional;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,39 +28,38 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public AnswerPreviewPayload getAnswerPreview(PreviewPayload preview) {
-        var source = em.find(Account.class, Integer.parseInt(preview.getSource()));
-        if (Integer.parseInt(preview.getAmount()) <= 0 || source.getBalance() - Float.parseFloat(preview.getAmount()) < - source.getAccountType().getOverdraft() ) {
-            return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - Float.parseFloat(preview.getAmount()), "The transaction is not valid", null);
+        var source = em.find(Account.class, preview.getSource());
+        var dest = em.find(Account.class, preview.getDestination());
+        if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
+            return new AnswerPreviewPayload(false, source.getBalance(), source.getBalance() - preview.getAmount(), "The transaction is not valid", null);
         }
-        return new AnswerPreviewPayload(true, source.getBalance(), source.getBalance() - Float.parseFloat(preview.getAmount()), "The transaction is valid", null);
+        return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), "The transaction is valid", null);
     }
+
     @Transactional
-    public AnswerApplyPayload apply(ApplyPayload preview) throws SystemException {
-        var source = em.find(Account.class, Integer.parseInt(preview.getSource()));
-        var dest = em.find(Account.class, Integer.parseInt(preview.getDestination()));
+    public AnswerApplyPayload apply(ApplyPayload preview) {
+        var source = em.find(Account.class, preview.getSource());
+        var dest = em.find(Account.class, preview.getDestination());
 
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
             new AnswerApplyPayload(false,"Transaction failed");
         }
-
-
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
 
-        em.persist(new Transaction(Integer.parseInt(preview.getSource()),
-                    Integer.parseInt(preview.getDestination()),
+        em.persist(new Transaction(preview.getSource(),
+                    preview.getDestination(),
                     preview.getAuthor(),preview.getAmount(),preview.getComment(),0,now));
 
-        source.setBalance(source.getBalance()-preview.getAmount());
-        dest.setBalance(source.getBalance()+preview.getAmount());
-        em.flush();
 
+        source.setBalance(source.getBalance()-preview.getAmount());
+        dest.setBalance(dest.getBalance()+preview.getAmount());
+        em.flush();
         return new AnswerApplyPayload(true,"Transaction added");
     }
 
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
-        var destUser = em.find(User.class, userId);
         var cb = em.getCriteriaBuilder();
         var cq = cb.createQuery(Transaction.class);
         var root = cq.from(Transaction.class);
@@ -91,8 +91,6 @@ public class TransactionBean implements TransactionBeanLocal {
                 t.getApplied().toString());
         }).toList();
 
-       // var transactions = new ArrayList<TransactionContent>();
-       // transactions.add(new TransactionContent(new BigInteger(String.valueOf(transactionContents.size())), LocalDateTime.now(), "Label du compte source", "Label du compte destination", "Florian", 125.65f, "Etienne ALEXANDRE", "Cadeau pour Noël", "APPLYED"));
         return new AllTransactionsPayload(transactionContents);
     }
 }
