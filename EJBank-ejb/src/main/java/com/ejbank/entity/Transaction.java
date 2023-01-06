@@ -47,6 +47,10 @@ public class Transaction {
         return date;
     }
 
+    public void setApplied(Integer applied) {
+        this.applied = applied;
+    }
+
     @Column(name = "account_id_from")
     private Integer account_id_from;
 
@@ -72,16 +76,14 @@ public class Transaction {
 
 
 
+
     public Transaction(Integer account_id_to, Integer account_id_from, String author, Float amount, String comment, Integer applied, Date date) {
         this.account_id_to = Objects.requireNonNull(account_id_to);
         this.account_id_from = Objects.requireNonNull(account_id_from);
         this.author = Objects.requireNonNull(author);
         this.amount = Objects.requireNonNull(amount);
-        this.comment = Objects.requireNonNull(comment);
+        this.comment = comment;
         this.applied = Objects.requireNonNull(applied);
         this.date = Objects.requireNonNull(date);
     }
-
-
-
 }

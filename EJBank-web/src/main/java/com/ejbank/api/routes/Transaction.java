@@ -43,7 +43,6 @@ public class Transaction {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/apply")
     public AnswerApplyPayload applyRequest(ApplyPayload payload) throws SystemException {
-        //TODO : Apply a transaction (verify if it's correct) and send answer
         return transactionBeanLocal.apply(payload);
     }
 
@@ -51,14 +50,12 @@ public class Transaction {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/validation")
     public AnswerValidationPayload validationRequest(ValidationPayload payload) {
-        //TODO : Validate a transaction (also verify if it's correct ?)
-        return new AnswerValidationPayload(false, "Retour du serveur");
+        return transactionBeanLocal.validate(payload);
     }
 
     @GET
     @Path("/validation/notification/{user_id}")
     public Integer validationNotif(@PathParam("user_id") Integer user_id) {
-        //TODO : Number of transactions to validate for user with user_id
-        return 3;
+        return transactionBeanLocal.getNotificationPayload(user_id);
     }
 }

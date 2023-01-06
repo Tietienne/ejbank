@@ -25,7 +25,6 @@ public class Accounts {
     @GET
     @Path("/attached/{user_id}")
     public AttachedAccountPayload attachedAccountPayloadReponse(@PathParam("user_id") Integer user_id) {
-        //TODO: need to have the right number of validations
         return  accountsBeanLocal.getAllAttachedAccount(user_id);
     }
 

@@ -7,12 +7,10 @@ public class AnswerValidationPayload {
     private final String message;
     private final String error;
 
-    public AnswerValidationPayload(Boolean result, String message) {
-        Objects.requireNonNull(result);
-        Objects.requireNonNull(message);
+    public AnswerValidationPayload(Boolean result, String message, String error) {
         this.result = result;
         this.message = message;
-        this.error = null;
+        this.error = error;
     }
 
     public Boolean getResult() {
