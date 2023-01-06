@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.math.BigInteger;
+import java.rmi.AlreadyBoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -54,14 +55,14 @@ public class TransactionBean implements TransactionBeanLocal {
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
             new AnswerApplyPayload(false,"Transaction échouée");
         }
-        Integer applied;
+        Boolean applied;
         String message;
         if (preview.getAmount() > 1000 && user instanceof Customer) {
             message = "Transaction ajoutée mais nécessite la validation de votre conseiller!";
-            applied = 0;
+            applied = false;
         } else {
             message = "Transaction ajoutée.";
-            applied = 1;
+            applied = true;
         }
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
@@ -69,7 +70,7 @@ public class TransactionBean implements TransactionBeanLocal {
         em.persist(new Transaction(preview.getDestination(),
                 preview.getSource(),
                 preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now));
-        if (applied == 1) {
+        if (applied) {
             source.setBalance(source.getBalance()-preview.getAmount());
             dest.setBalance(dest.getBalance()+preview.getAmount());
         }
@@ -79,11 +80,17 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
+        var user  = em.find(Advisor.class, userId);
+        if(user == null) {
+            return  new AllTransactionsPayload(null,"you are not allowed to do this");
+        }
+
         var cb = em.getCriteriaBuilder();
         var cq = cb.createQuery(Transaction.class);
         var root = cq.from(Transaction.class);
         cq.select(root);
         cq.where(cb.equal(root.get("account_id_from"), accountId));
+        cq.orderBy(cb.asc(root.get("applied")));
         var query = em.createQuery(cq);
         query.setFirstResult(offset);
         query.setMaxResults(10);
@@ -110,7 +117,7 @@ public class TransactionBean implements TransactionBeanLocal {
                 t.getApplied().toString());
         }).toList();
 
-        return new AllTransactionsPayload(transactionContents);
+        return new AllTransactionsPayload(transactionContents, null);
     }
 
     @Override
@@ -122,7 +129,7 @@ public class TransactionBean implements TransactionBeanLocal {
             for (var customer : advisor.getCustomers()) {
                 for (var account : customer.getAccounts()) {
                     for (var transaction : account.getTransactions()) {
-                        if (transaction.getApplied() == 0) {
+                        if (!transaction.getApplied()) {
                             notification++;
                         }
                     }
@@ -144,7 +151,7 @@ public class TransactionBean implements TransactionBeanLocal {
             if (transaction.getAmount() <= 0 || source.getBalance() - transaction.getAmount() < - source.getAccountType().getOverdraft() ) {
                 new AnswerValidationPayload(false,"Transaction échouée", null);
             }
-            transaction.setApplied(1);
+            transaction.setApplied(true);
             source.setBalance(source.getBalance()-transaction.getAmount());
             dest.setBalance(dest.getBalance()+transaction.getAmount());
             em.flush();

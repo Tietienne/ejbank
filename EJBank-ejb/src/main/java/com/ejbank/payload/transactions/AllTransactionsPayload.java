@@ -9,11 +9,11 @@ public class AllTransactionsPayload {
     private final List<TransactionContent> transactions;
     private final String error;
 
-    public AllTransactionsPayload(List<TransactionContent> transactions) {
-        Objects.requireNonNull(transactions);
+    public AllTransactionsPayload(List<TransactionContent> transactions, String error) {
+       // Objects.requireNonNull(transactions);
         this.transactions = transactions;
         this.total = transactions.size();
-        this.error = null;
+        this.error = error;
     }
 
     public List<TransactionContent> getTransactions() {

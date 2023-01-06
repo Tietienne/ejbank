@@ -39,7 +39,7 @@ public class Transaction {
         return comment;
     }
 
-    public Integer getApplied() {
+    public Boolean getApplied() {
         return applied;
     }
 
@@ -47,7 +47,7 @@ public class Transaction {
         return date;
     }
 
-    public void setApplied(Integer applied) {
+    public void setApplied(Boolean applied) {
         this.applied = applied;
     }
 
@@ -67,7 +67,7 @@ public class Transaction {
     private String comment;
 
     @Column
-    private Integer applied;
+    private Boolean applied;
 
     @Column
     private Date date;
@@ -77,7 +77,7 @@ public class Transaction {
 
 
 
-    public Transaction(Integer account_id_to, Integer account_id_from, String author, Float amount, String comment, Integer applied, Date date) {
+    public Transaction(Integer account_id_to, Integer account_id_from, String author, Float amount, String comment, Boolean applied, Date date) {
         this.account_id_to = Objects.requireNonNull(account_id_to);
         this.account_id_from = Objects.requireNonNull(account_id_from);
         this.author = Objects.requireNonNull(author);
