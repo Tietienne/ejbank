@@ -59,8 +59,8 @@ public class TransactionBean implements TransactionBeanLocal {
         if (applied) {
             source.setBalance(source.getBalance()-preview.getAmount());
             dest.setBalance(dest.getBalance()+preview.getAmount());
+            em.flush();
         }
-        em.flush();
         return new AnswerApplyPayload(true,message);
     }
 
