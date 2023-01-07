@@ -10,18 +10,13 @@ public class DetailsAccountPayload {
     private final Float amount;
     private final String error;
 
-    public DetailsAccountPayload(String owner, String advisor, Float rate, Float interest, Float amount) {
-        Objects.requireNonNull(owner);
-        Objects.requireNonNull(advisor);
-        Objects.requireNonNull(rate);
-        Objects.requireNonNull(interest);
-        Objects.requireNonNull(amount);
+    public DetailsAccountPayload(String owner, String advisor, Float rate, Float interest, Float amount, String error) {
         this.owner = owner;
         this.advisor = advisor;
         this.rate = rate;
         this.interest = interest;
         this.amount = amount;
-        this.error = null;
+        this.error = error;
     }
 
     public String getOwner() {

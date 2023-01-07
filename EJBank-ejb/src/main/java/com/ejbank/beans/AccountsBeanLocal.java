@@ -3,6 +3,7 @@ package com.ejbank.beans;
 import com.ejbank.payload.accounts.AllAccountPayload;
 import com.ejbank.payload.accounts.AttachedAccountPayload;
 import com.ejbank.payload.accounts.SummariesAccountPayload;
+import com.ejbank.payload.others.DetailsAccountPayload;
 
 import javax.ejb.Local;
 
@@ -14,5 +15,5 @@ public interface AccountsBeanLocal {
 
     AttachedAccountPayload getAllAttachedAccount(Integer advisor_id);
 
-
+    DetailsAccountPayload getDetailsAccount(Integer account_id, Integer user_id);
 }
