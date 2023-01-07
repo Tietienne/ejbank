@@ -66,7 +66,8 @@ public class AccountsBean implements AccountsBeanLocal {
                             notification++;
                         }
                     }
-                    allAccounts.add(new AttachedAccount(acc.getId().toString(),acc.getCustomer_id().toString(), acc.getAccountType().toString(),acc.getBalance(),notification));
+                    var custo = em.find(User.class, acc.getCustomer_id());
+                    allAccounts.add(new AttachedAccount(acc.getId().toString(),custo.getFirstname().concat(" ".concat(custo.getLastname())), acc.getAccountType().toString(),acc.getBalance(),notification));
                 }
             }
             return new AttachedAccountPayload(allAccounts, null);

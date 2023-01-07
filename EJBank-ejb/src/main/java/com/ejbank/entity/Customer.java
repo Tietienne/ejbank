@@ -10,7 +10,7 @@ public class Customer extends User {
     @ManyToOne(targetEntity = Advisor.class)
     private Advisor advisor;
 
-    @OneToMany( targetEntity = Account.class, fetch = FetchType.LAZY)
+    @OneToMany( targetEntity = Account.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id")
     private List<Account> accounts;
 

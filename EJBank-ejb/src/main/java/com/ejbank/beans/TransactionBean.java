@@ -47,7 +47,7 @@ public class TransactionBean implements TransactionBeanLocal {
         return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), message, null);
     }
 
-    @Transactional
+    @Transactional()
     public AnswerApplyPayload apply(ApplyPayload preview) {
         var source = em.find(Account.class, preview.getSource());
         var dest = em.find(Account.class, preview.getDestination());
@@ -57,7 +57,7 @@ public class TransactionBean implements TransactionBeanLocal {
         }
         Boolean applied;
         String message;
-        if (preview.getAmount() > 1000 && user instanceof Customer) {
+        if (preview.getAmount() >= 1000) {
             message = "Transaction ajoutée mais nécessite la validation de votre conseiller!";
             applied = false;
         } else {
@@ -66,21 +66,25 @@ public class TransactionBean implements TransactionBeanLocal {
         }
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
-
-        em.persist(new Transaction(preview.getDestination(),
+        var transaction = new Transaction(preview.getDestination(),
                 preview.getSource(),
-                preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now));
+                preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now);
+        em.persist(transaction);
+        em.merge(transaction);
+
         if (applied) {
             source.setBalance(source.getBalance()-preview.getAmount());
             dest.setBalance(dest.getBalance()+preview.getAmount());
         }
-        em.flush();
-        return new AnswerApplyPayload(true,message);
+       // em.flush();
+        return new AnswerApplyPayload(applied,message);
     }
 
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
+
         var user  = em.find(Advisor.class, userId);
+
         if(user == null) {
             return  new AllTransactionsPayload(null,"you are not allowed to do this");
         }
@@ -88,12 +92,16 @@ public class TransactionBean implements TransactionBeanLocal {
         var cb = em.getCriteriaBuilder();
         var cq = cb.createQuery(Transaction.class);
         var root = cq.from(Transaction.class);
+
         cq.select(root);
         cq.where(cb.equal(root.get("account_id_from"), accountId));
-        cq.orderBy(cb.asc(root.get("applied")));
+        var orderByApplied = cb.asc(root.get("applied"));
+        var orderByDate = cb.desc(root.get("date"));
+
+        cq.orderBy(orderByApplied,orderByDate);
         var query = em.createQuery(cq);
         query.setFirstResult(offset);
-        query.setMaxResults(10);
+
 
 
         var transactionContents = query.getResultList().stream().map(t -> {
@@ -114,7 +122,7 @@ public class TransactionBean implements TransactionBeanLocal {
                destAccount.getAccountType().getName(), destCustomer.getFirstname().concat(" ").concat(destCustomer.getLastname()),
                 t.getAmount(), auther.getFirstname().concat(" ").concat(auther.getLastname()),
                 t.getComment() == null? "NO COMMENT" : t.getComment(),
-                t.getApplied().toString());
+                t.getApplied() ? "APPLYED" : "TO_APPROVE");
         }).toList();
 
         return new AllTransactionsPayload(transactionContents, null);
@@ -122,6 +130,7 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public Integer getNotificationPayload(Integer user_id) {
+        em.getEntityManagerFactory().getCache().evictAll();
         var user = em.find(User.class, user_id);
         if(user instanceof Advisor) {
             var advisor = (Advisor) user;
@@ -143,7 +152,7 @@ public class TransactionBean implements TransactionBeanLocal {
     //TODO : Tests
     @Override
     public AnswerValidationPayload validate(ValidationPayload preview) {
-        var transaction = em.find(Transaction.class, preview.getTransaction());
+        var transaction = em.find(Transaction.class, preview.getTransaction().intValue());
         var user = em.find(User.class, Integer.parseInt(preview.getAuthor()));
         var source = em.find(Account.class, transaction.getAccount_id_from());
         var dest = em.find(Account.class, transaction.getAccount_id_to());
