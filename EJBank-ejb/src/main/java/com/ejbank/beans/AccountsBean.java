@@ -101,7 +101,7 @@ public class AccountsBean implements AccountsBeanLocal {
                     if (!advisor.getId().equals(customer.getAdvisor().getId())) {
                         return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
                     }
-                    return new DetailsAccountPayload(customer.getFirstname() + " " + customer.getLastname(), accountUser.getFirstname() + " " + accountUser.getLastname(),
+                    return new DetailsAccountPayload(customer.getFirstname() + " " + customer.getLastname(), advisor.getFirstname() + " " + advisor.getLastname(),
                             account.getAccountType().getRate(), account.getBalance()*account.getAccountType().getRate()/100, account.getBalance(), null);
 
                 }
