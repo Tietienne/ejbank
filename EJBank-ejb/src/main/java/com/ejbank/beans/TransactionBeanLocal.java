@@ -1,10 +1,8 @@
 package com.ejbank.beans;
 
-import com.ejbank.payload.others.UserPayload;
 import com.ejbank.payload.transactions.*;
 
 import javax.ejb.Local;
-import javax.transaction.SystemException;
 
 @Local
 public interface TransactionBeanLocal {

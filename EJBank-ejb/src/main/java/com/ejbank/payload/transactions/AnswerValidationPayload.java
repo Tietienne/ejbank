@@ -1,7 +1,5 @@
 package com.ejbank.payload.transactions;
 
-import java.util.Objects;
-
 public class AnswerValidationPayload {
     private final Boolean result;
     private final String message;

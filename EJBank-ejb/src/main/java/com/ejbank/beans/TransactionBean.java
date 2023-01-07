@@ -6,7 +6,6 @@ import com.ejbank.entity.User;
 
 import com.ejbank.entity.*;
 
-import com.ejbank.payload.others.DetailsAccountPayload;
 import com.ejbank.payload.transactions.*;
 
 import javax.ejb.LocalBean;

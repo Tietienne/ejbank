@@ -1,7 +1,6 @@
 package com.ejbank.entity;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "ejbank_user")

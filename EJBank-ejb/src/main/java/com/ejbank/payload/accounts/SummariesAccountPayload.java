@@ -1,8 +1,6 @@
 package com.ejbank.payload.accounts;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class SummariesAccountPayload {
     private final List<SummaryAccount> accounts;

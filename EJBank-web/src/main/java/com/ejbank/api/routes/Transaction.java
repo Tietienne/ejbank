@@ -1,6 +1,5 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.beans.AccountsBeanLocal;
 import com.ejbank.beans.TransactionBeanLocal;
 import com.ejbank.payload.transactions.*;
 
@@ -9,11 +8,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.transaction.SystemException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Path("/transaction")
 @Produces(MediaType.APPLICATION_JSON)
