@@ -84,7 +84,7 @@ public class TransactionBean implements TransactionBeanLocal {
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
         var user  = em.find(User.class, userId);
 
-         if(user == null) {
+        if(user == null) {
             return new AllTransactionsPayload(null,"something went wrong");
         }
 
@@ -136,7 +136,7 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public Integer getNotificationPayload(Integer user_id) {
-        em.clear();
+        em.getEntityManagerFactory().getCache().evictAll();
         var user = em.find(User.class, user_id);
         if(user instanceof Advisor advisor) {
             var notification = 0;
