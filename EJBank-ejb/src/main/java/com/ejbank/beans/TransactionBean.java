@@ -14,10 +14,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.math.BigInteger;
-import java.rmi.AlreadyBoundException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
+
 
 import javax.transaction.Transactional;
 
@@ -55,7 +54,7 @@ public class TransactionBean implements TransactionBeanLocal {
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
             new AnswerApplyPayload(false,"Transaction échouée");
         }
-        Boolean applied;
+        boolean applied;
         String message;
         if (preview.getAmount() > 1000 && user instanceof Customer) {
             message = "Transaction ajoutée mais nécessite la validation de votre conseiller!";
@@ -76,7 +75,7 @@ public class TransactionBean implements TransactionBeanLocal {
             source.setBalance(source.getBalance()-preview.getAmount());
             dest.setBalance(dest.getBalance()+preview.getAmount());
         }
-       // em.flush();
+
         return new AnswerApplyPayload(applied,message);
     }
 
@@ -85,7 +84,7 @@ public class TransactionBean implements TransactionBeanLocal {
 
         var user  = em.find(User.class, userId);
 
-        if(user == null) {
+         if(user == null) {
             return  new AllTransactionsPayload(null,"somthing went wrong");
         }
 
@@ -139,10 +138,9 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public Integer getNotificationPayload(Integer user_id) {
-        em.getEntityManagerFactory().getCache().evictAll();
+        em.clear();
         var user = em.find(User.class, user_id);
-        if(user instanceof Advisor) {
-            var advisor = (Advisor) user;
+        if(user instanceof Advisor advisor) {
             var notification = 0;
             for (var customer : advisor.getCustomers()) {
                 for (var account : customer.getAccounts()) {
