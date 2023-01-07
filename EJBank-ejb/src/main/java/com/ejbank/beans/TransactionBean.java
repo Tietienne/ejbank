@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 
+
 import javax.transaction.Transactional;
 
 import java.util.Calendar;
@@ -81,7 +82,6 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
-
         var user  = em.find(User.class, userId);
 
          if(user == null) {
@@ -100,8 +100,6 @@ public class TransactionBean implements TransactionBeanLocal {
         cq.orderBy(orderByApplied,orderByDate);
         var query = em.createQuery(cq);
         query.setFirstResult(offset);
-
-
 
         var transactionContents = query.getResultList().stream().map(t -> {
             var instant = t.getDate().toInstant();
