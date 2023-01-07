@@ -19,6 +19,11 @@ public class AccountsBean implements AccountsBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
 
+    /**
+     * Method to get the summaries accounts for a specific user.
+     * @param user_id User id as Integer
+     * @return SummariesAccountPayload : List of SummaryAccount (id, type, amount)
+     */
     @Override
     public SummariesAccountPayload getCustomerAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
@@ -33,6 +38,11 @@ public class AccountsBean implements AccountsBeanLocal {
         }
     }
 
+    /**
+     * Get AllAccount linked to a user : if it's an advisor, all accounts of every managed customer
+     * @param user_id User id as Integer
+     * @return AllAccountPayload : List of AllAccount (id, user, type, amount)
+     */
     @Override
     public AllAccountPayload getAllAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
@@ -52,6 +62,11 @@ public class AccountsBean implements AccountsBeanLocal {
         }
     }
 
+    /**
+     * Get all AttachedAccount for an advisor
+     * @param advisor_id Advisor id as Integer
+     * @return AttachedAccountPayload : List of AttachedAccount (id, user, type, amount, number of notification of transactions to validate)
+     */
     @Override
     public AttachedAccountPayload getAllAttachedAccount(Integer advisor_id) {
         var user = em.find(User.class, advisor_id);
@@ -78,6 +93,12 @@ public class AccountsBean implements AccountsBeanLocal {
         }
     }
 
+    /**
+     * Get the details of an account, as a user. If user is not allowed : not owning the account or not the advisor of this account, he won't get any details
+     * @param account_id Account id as Integer : account searched
+     * @param user_id User id as Integer : user asking for details
+     * @return DetailsAccountPayload (owner, advisor, rate, interest, amount)
+     */
     @Override
     public DetailsAccountPayload getDetailsAccount(Integer account_id, Integer user_id) {
         var user = em.find(User.class, user_id);
