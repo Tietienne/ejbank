@@ -1,7 +1,5 @@
 package com.ejbank.payload.accounts;
 
-import java.util.Objects;
-
 public class AttachedAccount {
 
     private final String id;
@@ -11,10 +9,6 @@ public class AttachedAccount {
     private final Integer validation;
 
     public AttachedAccount(String id, String user, String type, Float amount, Integer validation) {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(user);
-        Objects.requireNonNull(type);
-        Objects.requireNonNull(validation);
         this.id = id;
         this.user = user;
         this.type = type;
