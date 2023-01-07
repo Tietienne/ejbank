@@ -1,9 +1,11 @@
 package com.ejbank.beans;
 
+import com.ejbank.entity.Account;
 import com.ejbank.entity.Advisor;
 import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
 import com.ejbank.payload.accounts.*;
+import com.ejbank.payload.others.DetailsAccountPayload;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -74,5 +76,39 @@ public class AccountsBean implements AccountsBeanLocal {
         } else {
             return new AttachedAccountPayload(null, "Vous n'êtes pas un conseiller, vous n'avez pas de comptes rattachés.");
         }
+    }
+
+    @Override
+    public DetailsAccountPayload getDetailsAccount(Integer account_id, Integer user_id) {
+        var user = em.find(User.class, user_id);
+        var account = em.find(Account.class, account_id);
+        if (user == null) {
+            return new DetailsAccountPayload(null, null, null, null, null, "Utilisateur introuvable");
+        } else {
+            if (user instanceof Customer customer) {
+                if (!account.getCustomer_id().equals(customer.getId())) {
+                    return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
+                }
+                // TODO : calculate interest
+                return new DetailsAccountPayload(customer.getFirstname() + customer.getLastname(), customer.getAdvisor().getFirstname() + customer.getAdvisor().getLastname(),
+                        account.getAccountType().getRate(), 0f, account.getBalance(), null);
+            }
+            if (user instanceof Advisor advisor) {
+                var accountUser = em.find(User.class, account.getCustomer_id());
+                if (accountUser == null) {
+                    return new DetailsAccountPayload(null, null, null, null, null, "Utilisateur introuvable");
+                }
+                if (accountUser instanceof Customer customer) {
+                    if (!advisor.getId().equals(customer.getAdvisor().getId())) {
+                        return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
+                    }
+                    // TODO : calculate interest
+                    return new DetailsAccountPayload(customer.getFirstname() + customer.getLastname(), accountUser.getFirstname() + accountUser.getLastname(),
+                            account.getAccountType().getRate(), 0f, account.getBalance(), null);
+
+                }
+            }
+        }
+        return new DetailsAccountPayload(null, null, null, null, null, "Impossible de vérifier les informations de ce compte, informer votre administrateur!");
     }
 }

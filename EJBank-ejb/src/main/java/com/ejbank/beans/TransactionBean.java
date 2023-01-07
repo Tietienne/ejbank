@@ -85,7 +85,7 @@ public class TransactionBean implements TransactionBeanLocal {
         var user  = em.find(User.class, userId);
 
          if(user == null) {
-            return  new AllTransactionsPayload(null,"somthing went wrong");
+            return new AllTransactionsPayload(null,"something went wrong");
         }
 
         var cb = em.getCriteriaBuilder();
