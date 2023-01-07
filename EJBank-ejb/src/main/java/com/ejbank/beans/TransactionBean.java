@@ -83,10 +83,10 @@ public class TransactionBean implements TransactionBeanLocal {
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
 
-        var user  = em.find(Advisor.class, userId);
+        var user  = em.find(User.class, userId);
 
         if(user == null) {
-            return  new AllTransactionsPayload(null,"you are not allowed to do this");
+            return  new AllTransactionsPayload(null,"somthing went wrong");
         }
 
         var cb = em.getCriteriaBuilder();
@@ -115,14 +115,23 @@ public class TransactionBean implements TransactionBeanLocal {
 
             var auther = em.find(User.class,Integer.parseInt(t.getAuthor()));
 
+            String applied = "WAITING_APPROVE" ;
+
+            if(user instanceof Advisor) {
+                if(t.getApplied()) {
+                    applied = "APPLYED";
+                } else {
+                    applied = "TO_APPROVE";
+                }
+            }
             return new TransactionContent(
                  BigInteger.valueOf(t.getId()),
                 ldt,
                srcAccount.getAccountType().getName().concat("(").concat(srcCustomer.getFirstname().concat(" ").concat(srcCustomer.getLastname()).concat(")")),
                destAccount.getAccountType().getName(), destCustomer.getFirstname().concat(" ").concat(destCustomer.getLastname()),
                 t.getAmount(), auther.getFirstname().concat(" ").concat(auther.getLastname()),
-                t.getComment() == null? "NO COMMENT" : t.getComment(),
-                t.getApplied() ? "APPLYED" : "TO_APPROVE");
+                t.getComment(),
+                 applied);
         }).toList();
 
         return new AllTransactionsPayload(transactionContents, null);

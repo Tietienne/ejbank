@@ -23,7 +23,6 @@ public class TransactionContent {
         Objects.requireNonNull(destination_user);
         Objects.requireNonNull(amount);
         Objects.requireNonNull(author);
-        Objects.requireNonNull(comment);
         Objects.requireNonNull(state);
         this.id = id;
         this.date = date;
