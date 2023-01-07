@@ -6,6 +6,7 @@ import com.ejbank.entity.User;
 
 import com.ejbank.entity.*;
 
+import com.ejbank.payload.others.DetailsAccountPayload;
 import com.ejbank.payload.transactions.*;
 
 import javax.ejb.LocalBean;
@@ -16,7 +17,6 @@ import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-
 
 
 import javax.transaction.Transactional;
@@ -82,10 +82,29 @@ public class TransactionBean implements TransactionBeanLocal {
 
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
+
         var user  = em.find(User.class, userId);
+        var account = em.find(Account.class, accountId);
 
         if(user == null) {
-            return new AllTransactionsPayload(null,"something went wrong");
+            return new AllTransactionsPayload(null,"Utilisateur introuvable");
+        } else {
+            if (user instanceof Customer customer) {
+                if (!account.getCustomer_id().equals(customer.getId())) {
+                    return new AllTransactionsPayload(null,"Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
+                }
+            }
+            if (user instanceof Advisor advisor) {
+                var accountUser = em.find(User.class, account.getCustomer_id());
+                if (accountUser == null) {
+                    return new AllTransactionsPayload(null,"Utilisateur introuvable");
+                }
+                if (accountUser instanceof Customer customer) {
+                    if (!advisor.getId().equals(customer.getAdvisor().getId())) {
+                        return new AllTransactionsPayload(null,"Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
+                    }
+                }
+            }
         }
 
         var cb = em.getCriteriaBuilder();

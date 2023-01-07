@@ -10,9 +10,8 @@ public class AllTransactionsPayload {
     private final String error;
 
     public AllTransactionsPayload(List<TransactionContent> transactions, String error) {
-       // Objects.requireNonNull(transactions);
         this.transactions = transactions;
-        this.total = transactions.size();
+        this.total = transactions == null ? 0 : transactions.size();
         this.error = error;
     }
 
