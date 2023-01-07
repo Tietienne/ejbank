@@ -156,22 +156,26 @@ public class TransactionBean implements TransactionBeanLocal {
         return 0;
     }
 
-    //TODO : Tests
     @Override
     public AnswerValidationPayload validate(ValidationPayload preview) {
         var transaction = em.find(Transaction.class, preview.getTransaction().intValue());
         var user = em.find(User.class, Integer.parseInt(preview.getAuthor()));
         var source = em.find(Account.class, transaction.getAccount_id_from());
         var dest = em.find(Account.class, transaction.getAccount_id_to());
-        if (user instanceof Advisor) {
+        if (user instanceof Advisor advisor) {
             if (transaction.getAmount() <= 0 || source.getBalance() - transaction.getAmount() < - source.getAccountType().getOverdraft() ) {
                 new AnswerValidationPayload(false,"Transaction échouée", null);
             }
-            transaction.setApplied(true);
-            source.setBalance(source.getBalance()-transaction.getAmount());
-            dest.setBalance(dest.getBalance()+transaction.getAmount());
-            em.flush();
-            return new AnswerValidationPayload(true, "Transaction validée", null);
+            if (preview.getApprove()) {
+                transaction.setApplied(preview.getApprove());
+                source.setBalance(source.getBalance()-transaction.getAmount());
+                dest.setBalance(dest.getBalance()+transaction.getAmount());
+                em.flush();
+                return new AnswerValidationPayload(true, "Transaction validée", null);
+            } else {
+                em.remove(transaction);
+                return new AnswerValidationPayload(true, "Transaction annulée", null);
+            }
         }
         return new AnswerValidationPayload(false, null, "Vous n'êtes pas autorisé à valider cette transaction");
     }
