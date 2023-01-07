@@ -89,9 +89,8 @@ public class AccountsBean implements AccountsBeanLocal {
                 if (!account.getCustomer_id().equals(customer.getId())) {
                     return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
                 }
-                // TODO : calculate interest
-                return new DetailsAccountPayload(customer.getFirstname() + customer.getLastname(), customer.getAdvisor().getFirstname() + customer.getAdvisor().getLastname(),
-                        account.getAccountType().getRate(), 0f, account.getBalance(), null);
+                return new DetailsAccountPayload(customer.getFirstname() + " " + customer.getLastname(), customer.getAdvisor().getFirstname() + " " + customer.getAdvisor().getLastname(),
+                        account.getAccountType().getRate(), account.getBalance()*account.getAccountType().getRate()/100, account.getBalance(), null);
             }
             if (user instanceof Advisor advisor) {
                 var accountUser = em.find(User.class, account.getCustomer_id());
@@ -102,9 +101,8 @@ public class AccountsBean implements AccountsBeanLocal {
                     if (!advisor.getId().equals(customer.getAdvisor().getId())) {
                         return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
                     }
-                    // TODO : calculate interest
-                    return new DetailsAccountPayload(customer.getFirstname() + customer.getLastname(), accountUser.getFirstname() + accountUser.getLastname(),
-                            account.getAccountType().getRate(), 0f, account.getBalance(), null);
+                    return new DetailsAccountPayload(customer.getFirstname() + " " + customer.getLastname(), accountUser.getFirstname() + " " + accountUser.getLastname(),
+                            account.getAccountType().getRate(), account.getBalance()*account.getAccountType().getRate()/100, account.getBalance(), null);
 
                 }
             }
