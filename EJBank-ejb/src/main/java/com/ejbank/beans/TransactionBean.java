@@ -57,7 +57,7 @@ public class TransactionBean implements TransactionBeanLocal {
         }
         Boolean applied;
         String message;
-        if (preview.getAmount() >= 1000) {
+        if (preview.getAmount() > 1000 && user instanceof Customer) {
             message = "Transaction ajoutée mais nécessite la validation de votre conseiller!";
             applied = false;
         } else {
