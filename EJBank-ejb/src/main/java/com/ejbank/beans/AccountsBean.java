@@ -21,7 +21,7 @@ public class AccountsBean implements AccountsBeanLocal {
 
     /**
      * Method to get the summaries accounts for a specific user.
-     * @param user_id User id as Integer
+     * @param user_id User id as Integer : the user asking
      * @return SummariesAccountPayload : List of SummaryAccount (id, type, amount)
      */
     @Override
@@ -40,7 +40,7 @@ public class AccountsBean implements AccountsBeanLocal {
 
     /**
      * Get AllAccount linked to a user : if it's an advisor, all accounts of every managed customer
-     * @param user_id User id as Integer
+     * @param user_id User id as Integer : the user asking
      * @return AllAccountPayload : List of AllAccount (id, user, type, amount)
      */
     @Override
@@ -64,7 +64,7 @@ public class AccountsBean implements AccountsBeanLocal {
 
     /**
      * Get all AttachedAccount for an advisor
-     * @param advisor_id Advisor id as Integer
+     * @param advisor_id Advisor id as Integer : the advisor asking
      * @return AttachedAccountPayload : List of AttachedAccount (id, user, type, amount, number of notification of transactions to validate)
      */
     @Override
