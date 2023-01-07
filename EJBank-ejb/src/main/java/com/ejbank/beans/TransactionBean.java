@@ -76,7 +76,7 @@ public class TransactionBean implements TransactionBeanLocal {
             dest.setBalance(dest.getBalance()+preview.getAmount());
         }
 
-        return new AnswerApplyPayload(applied,message);
+        return new AnswerApplyPayload(true,message);
     }
 
     @Override
