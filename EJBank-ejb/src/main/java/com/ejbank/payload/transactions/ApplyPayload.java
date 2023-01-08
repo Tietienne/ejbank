@@ -1,7 +1,5 @@
 package com.ejbank.payload.transactions;
 
-import java.util.Objects;
-
 public class ApplyPayload {
     private Integer source;
     private Integer destination;
