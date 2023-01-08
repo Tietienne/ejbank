@@ -1,6 +1,5 @@
 package com.ejbank.api.routes;
 
-import com.ejbank.beans.AccountsBeanLocal;
 import com.ejbank.beans.TransactionBeanLocal;
 import com.ejbank.payload.transactions.*;
 
@@ -9,11 +8,6 @@ import javax.enterprise.context.RequestScoped;
 import javax.transaction.SystemException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Path("/transaction")
 @Produces(MediaType.APPLICATION_JSON)
@@ -25,7 +19,6 @@ public class Transaction {
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
     public AllTransactionsPayload AllTransactions(@PathParam("account_id")Integer account_id, @PathParam("offset") Integer offset, @PathParam("user_id") Integer user_id) {
-        //TODO : send all transactions of an account (asked by an user ?) depending on an offset
         return transactionBeanLocal.getAllTransactionsOf(account_id,offset,user_id);
     }
 

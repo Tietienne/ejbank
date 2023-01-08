@@ -2,7 +2,6 @@ package com.ejbank.payload.transactions;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class TransactionContent {
     private final BigInteger id;
@@ -16,14 +15,6 @@ public class TransactionContent {
     private final String state;
 
     public TransactionContent(BigInteger id, LocalDateTime date, String source, String destination, String destination_user, Float amount, String author, String comment, String state) {
-        Objects.requireNonNull(id);
-        Objects.requireNonNull(date);
-        Objects.requireNonNull(source);
-        Objects.requireNonNull(destination);
-        Objects.requireNonNull(destination_user);
-        Objects.requireNonNull(amount);
-        Objects.requireNonNull(author);
-        Objects.requireNonNull(state);
         this.id = id;
         this.date = date;
         this.source = source;

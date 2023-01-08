@@ -1,7 +1,6 @@
 package com.ejbank.payload.accounts;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class AttachedAccountPayload {
     private final ArrayList<AttachedAccount> accounts;

@@ -1,8 +1,6 @@
 package com.ejbank.payload.transactions;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class AllTransactionsPayload {
     private final Integer total;

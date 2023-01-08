@@ -1,6 +1,5 @@
 package com.ejbank.beans;
 
-import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
 import com.ejbank.payload.others.UserPayload;
 
@@ -14,11 +13,12 @@ import javax.persistence.PersistenceContext;
 public class UserBean implements UserBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
+
     /**
-     * Method to get a user
-     * @param user_id Integer
-     * @return UserPayload
-     * */
+     * Get user information from his id.
+     * @param user_id User id as Integer
+     * @return UserPayload (Firstname, Lastname)
+     */
     @Override
     public UserPayload getUser(Integer user_id) {
         var result = em.find(User.class, user_id);

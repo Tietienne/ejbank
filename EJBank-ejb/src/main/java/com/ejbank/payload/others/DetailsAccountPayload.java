@@ -1,7 +1,5 @@
 package com.ejbank.payload.others;
 
-import java.util.Objects;
-
 public class DetailsAccountPayload {
     private final String owner;
     private final String advisor;

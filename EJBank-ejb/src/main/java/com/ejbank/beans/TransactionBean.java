@@ -6,16 +6,10 @@ import com.ejbank.entity.User;
 
 import com.ejbank.entity.*;
 
-import com.ejbank.payload.others.DetailsAccountPayload;
 import com.ejbank.payload.transactions.*;
 
-import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -29,26 +23,22 @@ import javax.transaction.*;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
-@TransactionManagement(TransactionManagementType.BEAN)
+
 public class TransactionBean implements TransactionBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
-
-    @Resource
-    private UserTransaction tx;
 
     public TransactionBean() {
     }
 
     /**
-     * Method that gives a preview of the transaction before it validate it.
-     * @param preview PreviewPayload
-     * @return AnswerPreviewPayload
-     * */
+     * Verification of a transaction and returning the appropriate answer
+     * @param preview PreviewPayload (source, destination, amount, author) : information of a transaction
+     * @return AnswerPreviewPayload (result, before, after, message)
+     */
     @Override
     public AnswerPreviewPayload getAnswerPreview(PreviewPayload preview) {
         var source = em.find(Account.class, preview.getSource());
@@ -66,10 +56,16 @@ public class TransactionBean implements TransactionBeanLocal {
         return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), message, null);
     }
     /**
-     * Method that apply a transaction
-     * @param preview ApplyPayload
-     * @return AnswerApplyPayload
-     * */
+     * Apply a transaction, verify it's correct, and return answer if it was applied (or "to approve")
+     * We are using @Transactional because the transaction is managed by the container.It wraps the Bean methods in transactions
+     * with automatic rollback when an exception occurs. This also means that manually starting/committing/rollback
+     * a Transaction is not allowed and throws an IllegalStateException.
+     * We tried declaring the class a transaction manager it didn't work too
+     * You can go check the commits.
+     * @param preview ApplyPayload (source, destination, amount, comment, author) : information of a transaction
+     * @return AnswerApplyPayload (result, message)
+     */
+    @Transactional(rollbackOn = {SQLException.class})
     public AnswerApplyPayload apply(ApplyPayload preview) {
         var source = em.find(Account.class, preview.getSource());
         var dest = em.find(Account.class, preview.getDestination());
@@ -87,41 +83,30 @@ public class TransactionBean implements TransactionBeanLocal {
             message = "Transaction ajoutée.";
             applied = true;
         }
-        try {
-            tx.begin();
+
             Calendar calendar = Calendar.getInstance();
             Date now = calendar.getTime();
             var transaction = new Transaction(preview.getDestination(),
                     preview.getSource(),
                     preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now);
             em.persist(transaction);
+            em.merge(transaction);
 
             if (applied) {
                 source.setBalance(source.getBalance()-preview.getAmount());
                 dest.setBalance(dest.getBalance()+preview.getAmount());
             }
-            tx.commit();
-        } catch (Exception e) {
-            try {
-                tx.rollback();
-            } catch (SystemException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-
-
 
         return new AnswerApplyPayload(true,message);
     }
 
     /**
-     * Method that return the transaction of an account
-     * @param accountId Integer
-     * @param offset the first range to get form the database, Integer
-     * @param userId Integer
-     * @return  AllTransactionsPayload
-     * */
+     * Get all transactions from a specific account as a user (not showing any result if not allowed). Skipping all results from 0 to the offset given.
+     * @param accountId Account id as Integer : the account searched
+     * @param offset Offset as Integer : skipping every result from 0 to this offset
+     * @param userId User id as Integer : the user asking
+     * @return AllTransactionsPayload : List of TransactionContent (id, date, source, destination, destination_user, amount, author, comment, state)
+     */
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
 
@@ -181,22 +166,22 @@ public class TransactionBean implements TransactionBeanLocal {
                 }
             }
             return new TransactionContent(
-                 BigInteger.valueOf(t.getId()),
-                ldt,
-               srcAccount.getAccountType().getName().concat("(").concat(srcCustomer.getFirstname().concat(" ").concat(srcCustomer.getLastname()).concat(")")),
-               destAccount.getAccountType().getName(), destCustomer.getFirstname().concat(" ").concat(destCustomer.getLastname()),
-                t.getAmount(), auther.getFirstname().concat(" ").concat(auther.getLastname()),
-                t.getComment(),
-                 applied);
+                    BigInteger.valueOf(t.getId()),
+                    ldt,
+                    srcAccount.getAccountType().getName().concat("(").concat(srcCustomer.getFirstname().concat(" ").concat(srcCustomer.getLastname()).concat(")")),
+                    destAccount.getAccountType().getName(), destCustomer.getFirstname().concat(" ").concat(destCustomer.getLastname()),
+                    t.getAmount(), auther.getFirstname().concat(" ").concat(auther.getLastname()),
+                    t.getComment(),
+                    applied);
         }).toList();
 
         return new AllTransactionsPayload(transactionContents, null);
     }
     /**
-     * Method that get the number of waiting to validated transactions
-     * @param  user_id Integer
-     * @return Integer
-     * */
+     * Return the number of notification of transaction to validate for a user (0 if not an advisor).
+     * @param user_id User id as Integer : user asking for his number of notification
+     * @return Integer : number of notification
+     */
     @Override
     public Integer getNotificationPayload(Integer user_id) {
         em.getEntityManagerFactory().getCache().evictAll();
@@ -217,10 +202,12 @@ public class TransactionBean implements TransactionBeanLocal {
         return 0;
     }
     /**
-     * Method that validated a transaction
-     * @param preview ValidationPayload
-     * @return AnswerValidationPayload
-     * */
+     * Verify if transaction is valid, then apply the transaction.
+     * If approve is false : removing transaction from db.
+     * If author is not allowed to validate this transaction, method do nothing.
+     * @param preview ValidationPayload (transaction, approve, author)
+     * @return AnswerValidationPayload (result, message)
+     */
     @Override
     public AnswerValidationPayload validate(ValidationPayload preview) {
         var transaction = em.find(Transaction.class, preview.getTransaction().intValue());
