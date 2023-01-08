@@ -9,8 +9,11 @@ import com.ejbank.entity.*;
 import com.ejbank.payload.others.DetailsAccountPayload;
 import com.ejbank.payload.transactions.*;
 
+import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionManagement;
+import javax.ejb.TransactionManagementType;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.persistence.EntityManager;
@@ -29,11 +32,15 @@ import java.util.Date;
 
 @Stateless
 @LocalBean
+@TransactionManagement(TransactionManagementType.BEAN)
 public class TransactionBean implements TransactionBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
 
-    public TransactionBean() {
+    @Resource
+    private UserTransaction tx;
+
+    public TransactionBean() throws NamingException {
     }
 
     /**
@@ -67,7 +74,7 @@ public class TransactionBean implements TransactionBeanLocal {
      * @param preview ApplyPayload
      * @return AnswerApplyPayload
      * */
-    @Transactional(rollbackOn = { SQLException.class })
+    //@Transactional(rollbackOn = { SQLException.class })
     public AnswerApplyPayload apply(ApplyPayload preview) {
         var source = em.find(Account.class, preview.getSource());
         var dest = em.find(Account.class, preview.getDestination());
@@ -85,18 +92,30 @@ public class TransactionBean implements TransactionBeanLocal {
             message = "Transaction ajoutée.";
             applied = true;
         }
+        try {
+            tx.begin();
+            Calendar calendar = Calendar.getInstance();
+            Date now = calendar.getTime();
+            var transaction = new Transaction(preview.getDestination(),
+                    preview.getSource(),
+                    preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now);
+            em.persist(transaction);
 
-        Calendar calendar = Calendar.getInstance();
-        Date now = calendar.getTime();
-        var transaction = new Transaction(preview.getDestination(),
-                preview.getSource(),
-                preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now);
-        em.persist(transaction);
-
-        if (applied) {
-            source.setBalance(source.getBalance()-preview.getAmount());
-            dest.setBalance(dest.getBalance()+preview.getAmount());
+            if (applied) {
+                source.setBalance(source.getBalance()-preview.getAmount());
+                dest.setBalance(dest.getBalance()+preview.getAmount());
+            }
+            tx.commit();
+        } catch (Exception e) {
+            try {
+                tx.rollback();
+            } catch (SystemException ex) {
+                throw new RuntimeException(ex);
+            }
         }
+
+
+
 
         return new AnswerApplyPayload(true,message);
     }
