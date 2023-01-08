@@ -11,15 +11,18 @@ import com.ejbank.payload.transactions.*;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import java.math.BigInteger;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 
-import javax.transaction.Transactional;
+import javax.transaction.*;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -30,6 +33,14 @@ public class TransactionBean implements TransactionBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
 
+    public TransactionBean() {
+    }
+
+    /**
+     * Method that gives a preview of the transaction before it validate it.
+     * @param preview PreviewPayload
+     * @return AnswerPreviewPayload
+     * */
     @Override
     public AnswerPreviewPayload getAnswerPreview(PreviewPayload preview) {
         var source = em.find(Account.class, preview.getSource());
@@ -46,12 +57,22 @@ public class TransactionBean implements TransactionBeanLocal {
         }
         return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), message, null);
     }
-
-    @Transactional()
+    /**
+     * Method that apply a transactional
+     * we used the @Transactional because the transaction is managed by the the container.
+     * It wraps the Bean methods in transactions with automatic rollback when an exception occurs.
+     * This also means that manually starting/committing/rollback a Transaction
+     * is not allowed and throws an IllegalStateException.
+     * link : <a href="https://stackoverflow.com/questions/11768556/usertransaction-failed-when-call-utx-begin-throws-java-lang-illegalstateexcep">stackoverflow</a>
+     * @param preview ApplyPayload
+     * @return AnswerApplyPayload
+     * */
+    @Transactional(rollbackOn = { SQLException.class })
     public AnswerApplyPayload apply(ApplyPayload preview) {
         var source = em.find(Account.class, preview.getSource());
         var dest = em.find(Account.class, preview.getDestination());
         var user = em.find(User.class, Integer.parseInt(preview.getAuthor()));
+
         if (preview.getAmount() <= 0 || source.getBalance() - preview.getAmount() < - source.getAccountType().getOverdraft() ) {
             new AnswerApplyPayload(false,"Transaction échouée");
         }
@@ -64,13 +85,13 @@ public class TransactionBean implements TransactionBeanLocal {
             message = "Transaction ajoutée.";
             applied = true;
         }
+
         Calendar calendar = Calendar.getInstance();
         Date now = calendar.getTime();
         var transaction = new Transaction(preview.getDestination(),
                 preview.getSource(),
                 preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now);
         em.persist(transaction);
-        em.merge(transaction);
 
         if (applied) {
             source.setBalance(source.getBalance()-preview.getAmount());
@@ -80,6 +101,13 @@ public class TransactionBean implements TransactionBeanLocal {
         return new AnswerApplyPayload(true,message);
     }
 
+    /**
+     * Method that return the transaction of an account
+     * @param accountId Integer
+     * @param offset the first range to get form the database, Integer
+     * @param userId Integer
+     * @return  AllTransactionsPayload
+     * */
     @Override
     public AllTransactionsPayload getAllTransactionsOf(Integer accountId, Integer offset, Integer userId) {
 
@@ -110,12 +138,10 @@ public class TransactionBean implements TransactionBeanLocal {
         var cb = em.getCriteriaBuilder();
         var cq = cb.createQuery(Transaction.class);
         var root = cq.from(Transaction.class);
-
         cq.select(root);
         cq.where(cb.equal(root.get("account_id_from"), accountId));
         var orderByApplied = cb.asc(root.get("applied"));
         var orderByDate = cb.desc(root.get("date"));
-
         cq.orderBy(orderByApplied,orderByDate);
         var query = em.createQuery(cq);
         query.setFirstResult(offset);
@@ -152,7 +178,11 @@ public class TransactionBean implements TransactionBeanLocal {
 
         return new AllTransactionsPayload(transactionContents, null);
     }
-
+    /**
+     * Method that get the number of waiting to validated transactions
+     * @param  user_id Integer
+     * @return Integer
+     * */
     @Override
     public Integer getNotificationPayload(Integer user_id) {
         em.getEntityManagerFactory().getCache().evictAll();
@@ -172,7 +202,11 @@ public class TransactionBean implements TransactionBeanLocal {
         }
         return 0;
     }
-
+    /**
+     * Method that validated a transaction
+     * @param preview ValidationPayload
+     * @return AnswerValidationPayload
+     * */
     @Override
     public AnswerValidationPayload validate(ValidationPayload preview) {
         var transaction = em.find(Transaction.class, preview.getTransaction().intValue());
