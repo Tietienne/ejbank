@@ -21,8 +21,6 @@ public class Account {
     @Column
     private Float balance;
 
-
-
     public Account() {
     }
 

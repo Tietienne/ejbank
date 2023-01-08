@@ -6,16 +6,10 @@ import com.ejbank.entity.User;
 
 import com.ejbank.entity.*;
 
-import com.ejbank.payload.others.DetailsAccountPayload;
 import com.ejbank.payload.transactions.*;
 
-import javax.annotation.Resource;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
-import javax.ejb.TransactionManagement;
-import javax.ejb.TransactionManagementType;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -29,7 +23,6 @@ import javax.transaction.*;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
@@ -209,7 +202,7 @@ public class TransactionBean implements TransactionBeanLocal {
         return 0;
     }
     /**
-     * Varify if transaction is valid, then apply the transaction.
+     * Verify if transaction is valid, then apply the transaction.
      * If approve is false : removing transaction from db.
      * If author is not allowed to validate this transaction, method do nothing.
      * @param preview ValidationPayload (transaction, approve, author)
