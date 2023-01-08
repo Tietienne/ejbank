@@ -5,25 +5,29 @@ import com.ejbank.entity.Advisor;
 import com.ejbank.entity.Customer;
 import com.ejbank.entity.User;
 import com.ejbank.payload.accounts.*;
+import com.ejbank.payload.others.DetailsAccountPayload;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.List;
 
 @Stateless
 @Local
 public class AccountsBean implements AccountsBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
-
+    /**
+     * Method to get the customer acccount
+     * @param user_id Integer
+     * @return SummariesAccountPayload
+     * */
     @Override
     public SummariesAccountPayload getCustomerAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
         if(user == null) {
-            return new SummariesAccountPayload(null,"User not here");
+            return new SummariesAccountPayload(null,"Utilisateur introuvable");
         } else if(user instanceof Advisor) {
             return new SummariesAccountPayload(null,"Vous n'êtes pas un client, vous ne pouvez pas consulter vos comptes.");
         } else {
@@ -32,12 +36,16 @@ public class AccountsBean implements AccountsBeanLocal {
             return new SummariesAccountPayload(shortAccount.toList(),null);
         }
     }
-
+    /**
+     * Method to get all accounts
+     * @param user_id Integer
+     * @return AllAccountPayload
+     * */
     @Override
     public AllAccountPayload getAllAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
         if(user == null) {
-            return new AllAccountPayload(null,"User not here");
+            return new AllAccountPayload(null,"Utilisateur introuvable");
         } else if(user instanceof Advisor) {
             var advisor = (Advisor) user;
             var allAccounts = new ArrayList<AllAccount>();
@@ -51,21 +59,71 @@ public class AccountsBean implements AccountsBeanLocal {
             return new AllAccountPayload(allAccount.toList(),null);
         }
     }
-
+    /**
+     * Method to get all attached accounts to an advisor.
+     * @param advisor_id Integer
+     * @return AttachedAccountPayload
+     * */
     @Override
     public AttachedAccountPayload getAllAttachedAccount(Integer advisor_id) {
         var user = em.find(User.class, advisor_id);
         if(user == null) {
-            return new AttachedAccountPayload(null);
+            return new AttachedAccountPayload(null, "Utilisateur introuvable");
         } else if(user instanceof Advisor) {
             var advisor = (Advisor) user;
             var allAccounts = new ArrayList<AttachedAccount>();
             for (var customer : advisor.getCustomers()) {
-                allAccounts.addAll(customer.getAccounts().stream().map(e -> new AttachedAccount(e.getId().toString(),e.getCustomer_id().toString(), e.getAccountType().toString(),e.getBalance(),1)).toList());
+                for(var acc : customer.getAccounts()) {
+                    var notification = 0;
+                    for (var transaction : acc.getTransactions()) {
+                        if (!transaction.getApplied()) {
+                            notification++;
+                        }
+                    }
+                    var custo = em.find(User.class, acc.getCustomer_id());
+                    allAccounts.add(new AttachedAccount(acc.getId().toString(),custo.getFirstname().concat(" ".concat(custo.getLastname())), acc.getAccountType().toString(),acc.getBalance(),notification));
+                }
             }
-            return new AttachedAccountPayload(allAccounts);
+            return new AttachedAccountPayload(allAccounts, null);
         } else {
-            return new AttachedAccountPayload(null);
+            return new AttachedAccountPayload(null, "Vous n'êtes pas un conseiller, vous n'avez pas de comptes rattachés.");
         }
+    }
+    /**
+     * Method to get the details of an account
+     * @param account_id Integer
+     * @param user_id Integer
+     * @return DetailsAccountPayload
+     * */
+    @Override
+    public DetailsAccountPayload getDetailsAccount(Integer account_id, Integer user_id) {
+        var user = em.find(User.class, user_id);
+        var account = em.find(Account.class, account_id);
+        if (user == null) {
+            return new DetailsAccountPayload(null, null, null, null, null, "Utilisateur introuvable");
+        } else {
+            if (user instanceof Customer customer) {
+                if (!account.getCustomer_id().equals(customer.getId())) {
+                    return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
+                }
+                return new DetailsAccountPayload(customer.getFirstname() + " " + customer.getLastname(), customer.getAdvisor().getFirstname() + " " + customer.getAdvisor().getLastname(),
+                        account.getAccountType().getRate(), account.getBalance()*account.getAccountType().getRate()/100, account.getBalance(), null);
+            }
+            if (user instanceof Advisor advisor) {
+                var accountUser = em.find(User.class, account.getCustomer_id());
+                if (accountUser == null) {
+                    return new DetailsAccountPayload(null, null, null, null, null, "Utilisateur introuvable");
+                }
+                if (accountUser instanceof Customer customer) {
+                    if (!advisor.getId().equals(customer.getAdvisor().getId())) {
+                        return new DetailsAccountPayload(null, null, null, null, null, "Vous n'êtes pas autorisé à visualiser les informations de ce compte!");
+                    }
+                    return new DetailsAccountPayload(customer.getFirstname() + " " + customer.getLastname(), advisor.getFirstname() + " " + advisor.getLastname(),
+                            account.getAccountType().getRate(), account.getBalance()*account.getAccountType().getRate()/100, account.getBalance(), null);
+
+                }
+            }
+        }
+        return new DetailsAccountPayload(null, null, null, null, null, "Impossible de vérifier les informations de ce compte, informer votre administrateur!");
     }
 }

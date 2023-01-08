@@ -8,7 +8,7 @@ import java.util.List;
 @DiscriminatorValue("advisor")
 public class Advisor extends User {
 
-    @OneToMany(targetEntity = Customer.class, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = Customer.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "advisor_id")
     private List<Customer> customers;
 

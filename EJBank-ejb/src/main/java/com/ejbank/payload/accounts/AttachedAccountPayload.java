@@ -7,12 +7,14 @@ public class AttachedAccountPayload {
     private final ArrayList<AttachedAccount> accounts;
     private final String error;
 
-    public AttachedAccountPayload(ArrayList<AttachedAccount> accounts) {
-        Objects.requireNonNull(accounts);
+    public AttachedAccountPayload(ArrayList<AttachedAccount> accounts, String error) {
         this.accounts = accounts;
-        this.error = null;
+        this.error = error;
     }
-
+    /**
+     * Method to get the list all accounts
+     * @return Lit<AllAccounts>
+     * */
     public ArrayList<AttachedAccount> getAccounts() {
         return accounts;
     }

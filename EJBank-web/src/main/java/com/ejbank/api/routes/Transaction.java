@@ -24,11 +24,9 @@ public class Transaction {
     private TransactionBeanLocal transactionBeanLocal;
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
-    public AllTransactionsPayload AllTransactions() {
+    public AllTransactionsPayload AllTransactions(@PathParam("account_id")Integer account_id, @PathParam("offset") Integer offset, @PathParam("user_id") Integer user_id) {
         //TODO : send all transactions of an account (asked by an user ?) depending on an offset
-        var transactions = new ArrayList<TransactionContent>();
-        transactions.add(new TransactionContent(new BigInteger("271077732"), LocalDateTime.now(), "Label du compte source", "Label du compte destination", "Florian", 125.65f, "Etienne ALEXANDRE", "Cadeau pour Noël", "APPLYED"));
-        return new AllTransactionsPayload(transactions);
+        return transactionBeanLocal.getAllTransactionsOf(account_id,offset,user_id);
     }
 
     @POST
@@ -45,7 +43,6 @@ public class Transaction {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/apply")
     public AnswerApplyPayload applyRequest(ApplyPayload payload) throws SystemException {
-        //TODO : Apply a transaction (verify if it's correct) and send answer
         return transactionBeanLocal.apply(payload);
     }
 
@@ -53,14 +50,12 @@ public class Transaction {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/validation")
     public AnswerValidationPayload validationRequest(ValidationPayload payload) {
-        //TODO : Validate a transaction (also verify if it's correct ?)
-        return new AnswerValidationPayload(false, "Retour du serveur");
+        return transactionBeanLocal.validate(payload);
     }
 
     @GET
     @Path("/validation/notification/{user_id}")
     public Integer validationNotif(@PathParam("user_id") Integer user_id) {
-        //TODO : Number of transactions to validate for user with user_id
-        return 3;
+        return transactionBeanLocal.getNotificationPayload(user_id);
     }
 }

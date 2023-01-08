@@ -1,8 +1,8 @@
 package com.ejbank.payload.accounts;
 
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Objects;
+
 
 public class SummariesAccountPayload {
     private final List<SummaryAccount> accounts;
@@ -12,7 +12,10 @@ public class SummariesAccountPayload {
         this.accounts = accounts;
         this.error = error;
     }
-
+    /**
+     * Method to get the list all accounts
+     * @return Lit<AllAccounts>
+     * */
     public List<SummaryAccount> getAccounts() {
         return accounts;
     }

@@ -14,13 +14,14 @@ public class Account {
     @JoinColumn(name = "account_type_id", referencedColumnName = "id")
     private AccountType accountType;
 
-
-
-    @OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = Transaction.class, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id_from",referencedColumnName = "id")
     private List<Transaction> transactions;
+
     @Column
     private Float balance;
+
+
 
     public Account() {
     }
@@ -66,4 +67,6 @@ public class Account {
     public List<Transaction> getTransactions() {
         return transactions;
     }
+
+
 }

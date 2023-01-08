@@ -14,7 +14,11 @@ import javax.persistence.PersistenceContext;
 public class UserBean implements UserBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
-
+    /**
+     * Method to get a user
+     * @param user_id Integer
+     * @return UserPayload
+     * */
     @Override
     public UserPayload getUser(Integer user_id) {
         var result = em.find(User.class, user_id);
