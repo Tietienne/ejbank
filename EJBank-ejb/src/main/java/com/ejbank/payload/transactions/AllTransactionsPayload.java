@@ -14,7 +14,10 @@ public class AllTransactionsPayload {
         this.total = transactions == null ? 0 : transactions.size();
         this.error = error;
     }
-
+    /**
+     * Method to get the list all transactions
+     * @return Lit<TransactionContent>
+     * */
     public List<TransactionContent> getTransactions() {
         return transactions;
     }

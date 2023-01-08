@@ -11,6 +11,10 @@ public class AllAccountPayload {
         this.error = error;
     }
 
+    /**
+     * Method to get the list all accounts
+     * @return Lit<AllAccounts>
+     * */
     public List<AllAccount> getAccounts() {
         return accounts;
     }

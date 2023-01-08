@@ -11,7 +11,10 @@ public class AttachedAccountPayload {
         this.accounts = accounts;
         this.error = error;
     }
-
+    /**
+     * Method to get the list all accounts
+     * @return Lit<AllAccounts>
+     * */
     public ArrayList<AttachedAccount> getAccounts() {
         return accounts;
     }
