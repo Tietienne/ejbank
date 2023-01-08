@@ -29,6 +29,7 @@ import javax.transaction.*;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
@@ -40,7 +41,7 @@ public class TransactionBean implements TransactionBeanLocal {
     @Resource
     private UserTransaction tx;
 
-    public TransactionBean() throws NamingException {
+    public TransactionBean() {
     }
 
     /**
@@ -65,16 +66,10 @@ public class TransactionBean implements TransactionBeanLocal {
         return new AnswerPreviewPayload(true, source.getBalance() - preview.getAmount(), dest.getBalance() + preview.getAmount(), message, null);
     }
     /**
-     * Method that apply a transactional
-     * we used the @Transactional because the transaction is managed by the the container.
-     * It wraps the Bean methods in transactions with automatic rollback when an exception occurs.
-     * This also means that manually starting/committing/rollback a Transaction
-     * is not allowed and throws an IllegalStateException.
-     * link : <a href="https://stackoverflow.com/questions/11768556/usertransaction-failed-when-call-utx-begin-throws-java-lang-illegalstateexcep">stackoverflow</a>
+     * Method that apply a transaction
      * @param preview ApplyPayload
      * @return AnswerApplyPayload
      * */
-    //@Transactional(rollbackOn = { SQLException.class })
     public AnswerApplyPayload apply(ApplyPayload preview) {
         var source = em.find(Account.class, preview.getSource());
         var dest = em.find(Account.class, preview.getDestination());
