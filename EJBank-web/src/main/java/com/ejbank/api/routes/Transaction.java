@@ -25,7 +25,6 @@ public class Transaction {
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
     public AllTransactionsPayload AllTransactions(@PathParam("account_id")Integer account_id, @PathParam("offset") Integer offset, @PathParam("user_id") Integer user_id) {
-        //TODO : send all transactions of an account (asked by an user ?) depending on an offset
         return transactionBeanLocal.getAllTransactionsOf(account_id,offset,user_id);
     }
 
