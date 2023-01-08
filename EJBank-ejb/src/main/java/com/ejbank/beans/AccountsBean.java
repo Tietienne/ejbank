@@ -18,7 +18,11 @@ import java.util.ArrayList;
 public class AccountsBean implements AccountsBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
-
+    /**
+     * Method to get the customer acccount
+     * @param user_id Integer
+     * @return SummariesAccountPayload
+     * */
     @Override
     public SummariesAccountPayload getCustomerAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
@@ -32,7 +36,11 @@ public class AccountsBean implements AccountsBeanLocal {
             return new SummariesAccountPayload(shortAccount.toList(),null);
         }
     }
-
+    /**
+     * Method to get all accounts
+     * @param user_id Integer
+     * @return AllAccountPayload
+     * */
     @Override
     public AllAccountPayload getAllAccounts(Integer user_id) {
         var user = em.find(User.class, user_id);
@@ -51,7 +59,11 @@ public class AccountsBean implements AccountsBeanLocal {
             return new AllAccountPayload(allAccount.toList(),null);
         }
     }
-
+    /**
+     * Method to get all attached accounts to an advisor.
+     * @param advisor_id Integer
+     * @return AttachedAccountPayload
+     * */
     @Override
     public AttachedAccountPayload getAllAttachedAccount(Integer advisor_id) {
         var user = em.find(User.class, advisor_id);
@@ -77,7 +89,12 @@ public class AccountsBean implements AccountsBeanLocal {
             return new AttachedAccountPayload(null, "Vous n'êtes pas un conseiller, vous n'avez pas de comptes rattachés.");
         }
     }
-
+    /**
+     * Method to get the details of an account
+     * @param account_id Integer
+     * @param user_id Integer
+     * @return DetailsAccountPayload
+     * */
     @Override
     public DetailsAccountPayload getDetailsAccount(Integer account_id, Integer user_id) {
         var user = em.find(User.class, user_id);
