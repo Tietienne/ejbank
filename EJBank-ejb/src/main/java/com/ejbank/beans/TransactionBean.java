@@ -33,13 +33,10 @@ import java.util.logging.Logger;
 
 @Stateless
 @LocalBean
-@TransactionManagement(TransactionManagementType.BEAN)
+
 public class TransactionBean implements TransactionBeanLocal {
     @PersistenceContext(unitName = "EJBankPU")
     private EntityManager em;
-
-    @Resource
-    private UserTransaction tx;
 
     public TransactionBean() {
     }
@@ -67,9 +64,15 @@ public class TransactionBean implements TransactionBeanLocal {
     }
     /**
      * Apply a transaction, verify it's correct, and return answer if it was applied (or "to approve")
+     * We are using @Transactional because the transaction is managed by the container.It wraps the Bean methods in transactions
+     * with automatic rollback when an exception occurs. This also means that manually starting/committing/rollback
+     * a Transaction is not allowed and throws an IllegalStateException.
+     * We tried declaring the class a transaction manager it didn't work too
+     * You can go check the commits.
      * @param preview ApplyPayload (source, destination, amount, comment, author) : information of a transaction
      * @return AnswerApplyPayload (result, message)
      */
+    @Transactional(rollbackOn = {SQLException.class})
     public AnswerApplyPayload apply(ApplyPayload preview) {
         var source = em.find(Account.class, preview.getSource());
         var dest = em.find(Account.class, preview.getDestination());
@@ -87,30 +90,19 @@ public class TransactionBean implements TransactionBeanLocal {
             message = "Transaction ajoutée.";
             applied = true;
         }
-        try {
-            tx.begin();
+
             Calendar calendar = Calendar.getInstance();
             Date now = calendar.getTime();
             var transaction = new Transaction(preview.getDestination(),
                     preview.getSource(),
                     preview.getAuthor(),preview.getAmount(),preview.getComment(),applied,now);
             em.persist(transaction);
+            em.merge(transaction);
 
             if (applied) {
                 source.setBalance(source.getBalance()-preview.getAmount());
                 dest.setBalance(dest.getBalance()+preview.getAmount());
             }
-            tx.commit();
-        } catch (Exception e) {
-            try {
-                tx.rollback();
-            } catch (SystemException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-
-
-
 
         return new AnswerApplyPayload(true,message);
     }
